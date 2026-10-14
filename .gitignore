@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Big raw downloads (re-create with: python backend/ml/01_get_data.py)
+backend/data/raw/
+
+# Live forecast cache (the demo snapshot in backend/data/demo_snapshot/ IS committed)
+backend/data/cache/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

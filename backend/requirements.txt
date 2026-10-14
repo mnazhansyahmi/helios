@@ -1,0 +1,25 @@
+# Pinned versions tested with Python 3.12 on 2026-10-14.
+# Install with:  python -m pip install -r backend/requirements.txt
+
+# API server
+fastapi==0.143.1
+uvicorn==0.54.0
+
+# Solar physics (sun position, panel irradiance, PV output)
+pvlib==0.16.1
+
+# Data + machine learning
+pandas==3.0.6
+numpy==2.5.4
+scikit-learn==1.9.1
+joblib==1.6.0
+
+# Downloading weather data
+requests==2.34.2
+
+# Public holiday calendars (Malaysia for the live forecast, US for training data)
+holidays==0.106
+
+# Tests
+pytest==9.1.1
+httpx==0.28.1
