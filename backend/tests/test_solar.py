@@ -39,6 +39,24 @@ def test_clear_day_total_is_realistic():
     assert 4.0 < kwh_per_kwp < 6.0
 
 
+def test_missing_weather_gives_missing_output_not_zero():
+    weather = clear_sky_day()
+    weather.loc[weather.index[12], "ghi"] = float("nan")  # satellite gap at noon
+    kwh = solar.rooftop_kwh(weather, kwp=1, tilt=10, azimuth=180)
+    assert pd.isna(kwh.iloc[12]) and kwh.iloc[11] > 0
+
+
+def test_ai_correction_never_adds_sunlight_at_night():
+    class AlwaysBright:  # a deliberately wrong "model" that predicts sun all day and night
+        def predict(self, features):
+            return [500.0] * len(features)
+
+    weather = clear_sky_day().assign(cloud_cover=50.0)
+    corrected = solar.corrected_ghi(weather, model=AlwaysBright())
+    night = (corrected.index.hour < 6) | (corrected.index.hour >= 20)
+    assert (corrected[night] == 0).all() and (corrected[~night] >= 0).all()
+
+
 def test_output_scales_with_panel_size():
     weather = clear_sky_day()
     small = solar.rooftop_kwh(weather, kwp=2, tilt=10, azimuth=180).sum()

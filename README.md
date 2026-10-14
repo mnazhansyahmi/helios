@@ -40,8 +40,22 @@ _(Demo run command added on Day 4.)_
 ML pipeline (only needed to rebuild the models; outputs are committed):
 
 ```bash
-.venv\Scripts\python backend/ml/01_get_data.py
+.venv\Scripts\python backend/ml/01_get_data.py      # download public data
+.venv\Scripts\python backend/ml/02_eval_solar.py    # solar accuracy -> backend/reports/accuracy.json
 ```
+
+## Accuracy so far (held-out data)
+
+**Solar, one day ahead: 10% better than a simple guess.** Average error 0.062 kWh per kWp
+per daylight hour, vs 0.070 for "the average day for that month". Tested on Apr–Sep 2026,
+which the model never saw, against satellite sunlight estimates (there is no public rooftop
+meter data).
+
+We also tested an AI correction of the weather forecast. It helped in every season of
+2024–25, but over-corrected in 2026: the forecast's sunlight bias dropped from +41 to
++14 W/m². So the demo uses the plain forecast. That choice was made *after* seeing the
+test results, and the dashboard says so. With live CREAM meter data, the correction could
+be retrained continuously; that is a next step, not part of this prototype.
 
 ## Data sources
 

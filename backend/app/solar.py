@@ -10,6 +10,9 @@ library for modelling solar panels. The steps, in plain words:
   5. Panel DC power                          (PVWatts model)
   6. Minus system losses and inverter        -> AC energy delivered
 """
+from functools import lru_cache
+
+import joblib
 import pandas as pd
 import pvlib
 
@@ -56,4 +59,60 @@ def rooftop_kwh(weather: pd.DataFrame, kwp: float, tilt: float, azimuth: float) 
                                       eta_inv_nom=config.INVERTER_EFFICIENCY)
 
     # Average watts over one hour = watt-hours; /1000 -> kWh. Never negative (night).
-    return (ac_watts.clip(lower=0) / 1000).rename("kwh")
+    kwh = ac_watts.clip(lower=0) / 1000
+    # Missing weather must give missing output, not a fake zero.
+    return kwh.where(weather["ghi"].notna()).rename("kwh")
+
+
+# ---------------------------------------------------------------------------
+# AI correction of the sunlight forecast
+#
+# Weather models make repeatable mistakes (e.g. over-forecasting afternoon sun when
+# tropical clouds build up). A small ML model, trained on past forecasts vs Himawari
+# satellite data, learns those mistakes and corrects tomorrow's sunlight forecast.
+# The physics above then turns the corrected sunlight into kWh.
+# Trained and scored by backend/ml/02_eval_solar.py. If that script decided the
+# correction does not help, no model file is saved and the raw forecast is used.
+# ---------------------------------------------------------------------------
+CORRECTION_MODEL_PATH = config.MODELS_DIR / "solar_correction.joblib"
+
+
+def clear_sky_ghi(index: pd.DatetimeIndex) -> pd.Series:
+    """Sunlight (W/m2) Elmina would get in each hour if there were no clouds at all."""
+    clear = _LOCATION.get_clearsky(index + pd.Timedelta(minutes=30))["ghi"]
+    clear.index = index
+    return clear
+
+
+def correction_features(weather: pd.DataFrame) -> pd.DataFrame:
+    """The inputs the correction model sees. Used for BOTH training and live forecasts."""
+    clear = clear_sky_ghi(weather.index)
+    sun = _LOCATION.get_solarposition(weather.index + pd.Timedelta(minutes=30))
+    return pd.DataFrame({
+        "forecast_ghi": weather["ghi"],
+        "clear_sky_ghi": clear,
+        # 1.0 = forecast says cloudless; 0.3 = heavy cloud
+        "forecast_clearness": (weather["ghi"] / clear).where(clear > 10, 0).clip(0, 1.5),
+        "cloud_cover": weather["cloud_cover"],
+        "temp_air": weather["temp_air"],
+        "hour": weather.index.hour,
+        "sun_elevation": sun["apparent_elevation"].values,
+    }, index=weather.index)
+
+
+@lru_cache(maxsize=1)
+def _correction_model():
+    return joblib.load(CORRECTION_MODEL_PATH) if CORRECTION_MODEL_PATH.exists() else None
+
+
+def corrected_ghi(weather: pd.DataFrame, model=None) -> pd.Series:
+    """
+    Forecast sunlight after the AI correction (W/m2).
+    Falls back to the raw forecast if there is no trained correction model.
+    """
+    model = model or _correction_model()
+    if model is None:
+        return weather["ghi"]
+    features = correction_features(weather)
+    predicted = pd.Series(model.predict(features), index=weather.index).clip(lower=0)
+    return predicted.where(features["sun_elevation"] > 0, 0.0)  # no sun, no sunlight

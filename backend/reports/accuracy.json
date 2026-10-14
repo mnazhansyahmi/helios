@@ -1,0 +1,104 @@
+{
+  "solar": {
+    "title": "Solar forecast, one day ahead, per 1 kWp rooftop",
+    "sentence": "Solar forecast: 10% better than a simple guess.",
+    "detail": "Average error 0.062 kWh per kWp per daylight hour, vs 0.070 for the simple guess (average day for the month). Tested on Apr-Sep 2026, months the model never saw, against satellite sunlight estimates (no public rooftop meter data). Method chosen after testing: an AI correction helped in 2024-25 but over-corrected in 2026.",
+    "improvement_pct": 10,
+    "live_method": "forecast_pvlib",
+    "simple_guess": "monthly_average",
+    "methods": {
+      "persistence": {
+        "label": "Tomorrow = today",
+        "mae_hourly_kwh_per_kwp": 0.086,
+        "mae_daily_kwh_per_kwp": 0.652,
+        "bias_hourly_kwh_per_kwp": 0.0001
+      },
+      "monthly_average": {
+        "label": "Average day for the month",
+        "mae_hourly_kwh_per_kwp": 0.0696,
+        "mae_daily_kwh_per_kwp": 0.541,
+        "bias_hourly_kwh_per_kwp": -0.0072
+      },
+      "forecast_pvlib": {
+        "label": "Weather forecast + pvlib",
+        "mae_hourly_kwh_per_kwp": 0.0623,
+        "mae_daily_kwh_per_kwp": 0.424,
+        "bias_hourly_kwh_per_kwp": 0.0153
+      },
+      "forecast_ai": {
+        "label": "Weather forecast + AI correction + pvlib",
+        "mae_hourly_kwh_per_kwp": 0.0646,
+        "mae_daily_kwh_per_kwp": 0.443,
+        "bias_hourly_kwh_per_kwp": -0.0128
+      }
+    },
+    "ai_decision": {
+      "validation_period": "2026-01-01 to 2026-03-31",
+      "validation_mae_raw": 0.0699,
+      "validation_mae_ai": 0.0669,
+      "rule_picked": "forecast_ai",
+      "used_live": false,
+      "chosen_after_test": true
+    },
+    "drift": {
+      "forecast_sunlight_bias_w_m2_training": 41.1,
+      "forecast_sunlight_bias_w_m2_test": 13.6
+    },
+    "train_period": "2024-06-01 to 2026-03-31",
+    "test_period": "2026-04-01 to 2026-09-30",
+    "test_daylight_hours": 2122,
+    "test_full_days": 133,
+    "mean_actual_kwh_per_kwp_per_daylight_hour": 0.2949,
+    "mae_by_hour": {
+      "7": {
+        "forecast_pvlib": 0.0057,
+        "forecast_ai": 0.0049
+      },
+      "8": {
+        "forecast_pvlib": 0.0341,
+        "forecast_ai": 0.0294
+      },
+      "9": {
+        "forecast_pvlib": 0.0502,
+        "forecast_ai": 0.0465
+      },
+      "10": {
+        "forecast_pvlib": 0.0707,
+        "forecast_ai": 0.0696
+      },
+      "11": {
+        "forecast_pvlib": 0.0696,
+        "forecast_ai": 0.0803
+      },
+      "12": {
+        "forecast_pvlib": 0.0759,
+        "forecast_ai": 0.0782
+      },
+      "13": {
+        "forecast_pvlib": 0.0774,
+        "forecast_ai": 0.0834
+      },
+      "14": {
+        "forecast_pvlib": 0.0737,
+        "forecast_ai": 0.089
+      },
+      "15": {
+        "forecast_pvlib": 0.0857,
+        "forecast_ai": 0.0936
+      },
+      "16": {
+        "forecast_pvlib": 0.0926,
+        "forecast_ai": 0.0939
+      },
+      "17": {
+        "forecast_pvlib": 0.0714,
+        "forecast_ai": 0.0661
+      },
+      "18": {
+        "forecast_pvlib": 0.0311,
+        "forecast_ai": 0.0302
+      }
+    },
+    "truth": "Himawari satellite sunlight (Open-Meteo) converted to kWh with the same pvlib model"
+  }
+}
