@@ -32,7 +32,7 @@ _(Demo run command added on Day 4.)_
 | Part | What it does | Where |
 |---|---|---|
 | Solar forecast | Weather forecast → pvlib → kWh per rooftop per hour | `backend/app/solar.py` |
-| Demand forecast | ML model → kWh per buyer per hour | `backend/app/demand.py` (Day 3) |
+| Demand forecast | ML model → kWh per buyer per hour | `backend/app/demand.py` |
 | Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` (Day 4) |
 | Settings and sources | Every number, labelled REAL or ASSUMED | `backend/app/config.py` |
 | Example sites | Rooftops and buyers on the map | `backend/app/sites.py` |
@@ -42,6 +42,7 @@ ML pipeline (only needed to rebuild the models; outputs are committed):
 ```bash
 .venv\Scripts\python backend/ml/01_get_data.py      # download public data
 .venv\Scripts\python backend/ml/02_eval_solar.py    # solar accuracy -> backend/reports/accuracy.json
+.venv\Scripts\python backend/ml/03_train_demand.py  # demand models -> backend/models, accuracy.json
 ```
 
 ## Accuracy so far (held-out data)
@@ -56,6 +57,22 @@ We also tested an AI correction of the weather forecast. It helped in every seas
 +14 W/m². So the demo uses the plain forecast. That choice was made *after* seeing the
 test results, and the dashboard says so. With live CREAM meter data, the correction could
 be retrained continuously; that is a next step, not part of this prototype.
+
+**Demand, hourly per building: 23% better than a simple guess.** Average error 19.6 kWh
+per building per hour (8% of average use), vs 25.3 for "same hour last week" and 27.9 for
+"average for that hour of the week". Tested on Jul–Dec 2017, which the model never saw. It
+beats both simple guesses for all three buildings, but only narrowly for the Retail building
+(16.4 vs 18.1), which it also over-predicts by ~15 kWh on average.
+
+Limits, stated plainly:
+- The buildings are in Orlando, Florida (stand-ins). Elmina's temperature and humidity fall
+  within their training range (>99.7% of hours), but usage habits will differ.
+- The test uses *measured* temperatures; a real day-ahead temperature forecast adds some error.
+- During the Hurricane Irma week (8–17 Sep 2017) the model was worse than the plain
+  hour-of-week average (40 vs 32 kWh). It cannot know about closures.
+- Adding yesterday's and last week's meter readings cuts the error from 19.6 to 14.0 kWh.
+  That needs live meter data from SDP's buildings, so it is **not** in the demo; it shows
+  what CREAM data would add.
 
 ## Data sources
 

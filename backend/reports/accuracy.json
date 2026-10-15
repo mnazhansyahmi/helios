@@ -100,5 +100,186 @@
       }
     },
     "truth": "Himawari satellite sunlight (Open-Meteo) converted to kWh with the same pvlib model"
+  },
+  "demand": {
+    "title": "Demand forecast, hourly, per buyer building",
+    "sentence": "Demand forecast: 23% better than a simple guess.",
+    "detail": "Average error 20 kWh per building per hour (8% of average use), vs 25 for the simple guess (same hour last week). Tested on Jul-Dec 2017, months the model never saw, on 3 real Florida buildings used as stand-ins. Uses measured temperatures; a real temperature forecast would add some error.",
+    "improvement_pct": 23,
+    "beats_both_baselines": true,
+    "buyers_not_beating_both": [],
+    "simple_guess": "last_week",
+    "methods": {
+      "hour_of_week_average": {
+        "label": "Average for that hour of the week",
+        "mae_kwh": 27.9,
+        "mae_pct_of_mean_use": 11.9,
+        "bias_kwh": -4.3
+      },
+      "last_week": {
+        "label": "Same hour last week",
+        "mae_kwh": 25.3,
+        "mae_pct_of_mean_use": 10.8,
+        "bias_kwh": 2.9
+      },
+      "model": {
+        "label": "ML model (used in demo)",
+        "mae_kwh": 19.6,
+        "mae_pct_of_mean_use": 8.4,
+        "bias_kwh": 1.7
+      },
+      "model_with_meter_data": {
+        "label": "ML model + live meter data (not in demo)",
+        "mae_kwh": 14.0,
+        "mae_pct_of_mean_use": 6.0,
+        "bias_kwh": 1.4
+      }
+    },
+    "per_buyer": {
+      "Office A": {
+        "hour_of_week_average": {
+          "label": "Average for that hour of the week",
+          "mae_kwh": 16.9,
+          "mae_pct_of_mean_use": 16.9,
+          "bias_kwh": -1.0
+        },
+        "last_week": {
+          "label": "Same hour last week",
+          "mae_kwh": 12.6,
+          "mae_pct_of_mean_use": 12.6,
+          "bias_kwh": 2.4
+        },
+        "model": {
+          "label": "ML model (used in demo)",
+          "mae_kwh": 7.6,
+          "mae_pct_of_mean_use": 7.6,
+          "bias_kwh": 1.7
+        },
+        "model_with_meter_data": {
+          "label": "ML model + live meter data (not in demo)",
+          "mae_kwh": 6.6,
+          "mae_pct_of_mean_use": 6.6,
+          "bias_kwh": 1.5
+        }
+      },
+      "Retail building": {
+        "hour_of_week_average": {
+          "label": "Average for that hour of the week",
+          "mae_kwh": 21.8,
+          "mae_pct_of_mean_use": 19.4,
+          "bias_kwh": 10.4
+        },
+        "last_week": {
+          "label": "Same hour last week",
+          "mae_kwh": 18.1,
+          "mae_pct_of_mean_use": 16.1,
+          "bias_kwh": 3.1
+        },
+        "model": {
+          "label": "ML model (used in demo)",
+          "mae_kwh": 16.4,
+          "mae_pct_of_mean_use": 14.6,
+          "bias_kwh": 14.8
+        },
+        "model_with_meter_data": {
+          "label": "ML model + live meter data (not in demo)",
+          "mae_kwh": 10.1,
+          "mae_pct_of_mean_use": 9.0,
+          "bias_kwh": 6.5
+        }
+      },
+      "Office B": {
+        "hour_of_week_average": {
+          "label": "Average for that hour of the week",
+          "mae_kwh": 45.0,
+          "mae_pct_of_mean_use": 9.2,
+          "bias_kwh": -22.3
+        },
+        "last_week": {
+          "label": "Same hour last week",
+          "mae_kwh": 45.2,
+          "mae_pct_of_mean_use": 9.3,
+          "bias_kwh": 3.3
+        },
+        "model": {
+          "label": "ML model (used in demo)",
+          "mae_kwh": 34.9,
+          "mae_pct_of_mean_use": 7.1,
+          "bias_kwh": -11.3
+        },
+        "model_with_meter_data": {
+          "label": "ML model + live meter data (not in demo)",
+          "mae_kwh": 25.3,
+          "mae_pct_of_mean_use": 5.2,
+          "bias_kwh": -3.9
+        }
+      }
+    },
+    "sensitivity_hurricane_irma": {
+      "window": "2017-09-08 to 2017-09-17",
+      "without_irma_week": {
+        "hour_of_week_average": {
+          "label": "Average for that hour of the week",
+          "mae_kwh": 27.7,
+          "mae_pct_of_mean_use": 11.8,
+          "bias_kwh": -5.4
+        },
+        "last_week": {
+          "label": "Same hour last week",
+          "mae_kwh": 23.8,
+          "mae_pct_of_mean_use": 10.1,
+          "bias_kwh": 1.8
+        },
+        "model": {
+          "label": "ML model (used in demo)",
+          "mae_kwh": 18.5,
+          "mae_pct_of_mean_use": 7.9,
+          "bias_kwh": -0.3
+        },
+        "model_with_meter_data": {
+          "label": "ML model + live meter data (not in demo)",
+          "mae_kwh": 13.2,
+          "mae_pct_of_mean_use": 5.6,
+          "bias_kwh": 0.5
+        }
+      },
+      "irma_week_only": {
+        "hour_of_week_average": {
+          "label": "Average for that hour of the week",
+          "mae_kwh": 32.1,
+          "mae_pct_of_mean_use": 15.3,
+          "bias_kwh": 15.2
+        },
+        "last_week": {
+          "label": "Same hour last week",
+          "mae_kwh": 52.0,
+          "mae_pct_of_mean_use": 24.8,
+          "bias_kwh": 22.3
+        },
+        "model": {
+          "label": "ML model (used in demo)",
+          "mae_kwh": 40.2,
+          "mae_pct_of_mean_use": 19.2,
+          "bias_kwh": 37.0
+        },
+        "model_with_meter_data": {
+          "label": "ML model + live meter data (not in demo)",
+          "mae_kwh": 26.8,
+          "mae_pct_of_mean_use": 12.8,
+          "bias_kwh": 16.9
+        }
+      }
+    },
+    "features": [
+      "hour",
+      "day_of_week",
+      "is_holiday",
+      "temp_air",
+      "dew_point"
+    ],
+    "train_period": "2016-05-21 to 2017-06-30",
+    "test_period": "2017-07-01 to 2017-12-31",
+    "test_buyer_hours": 13248,
+    "truth": "Measured hourly electricity use, Building Data Genome 2 (Orlando, Florida)"
   }
 }
