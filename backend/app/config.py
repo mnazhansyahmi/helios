@@ -67,6 +67,14 @@ GRID_EMISSION_FACTOR_SOURCE = (
 MAX_MATCH_DISTANCE_KM = 5.0
 
 # ---------------------------------------------------------------------------
+# Fleet-size scenario slider (ASSUMED - a "what if", not a CREAM figure)
+# The 8 example rooftops are archetypes; the slider sets how many real rooftops
+# they stand for in total (each archetype = count / 8 rooftops).
+# ---------------------------------------------------------------------------
+FLEET_MIN, FLEET_MAX, FLEET_DEFAULT = 0, 1000, 50
+PRESET_HOUR = 12   # the demo preset matches solar to demand in the 12:00-13:00 hour
+
+# ---------------------------------------------------------------------------
 # Solar panel assumptions (ASSUMED - typical values, not CREAM specifications)
 # ---------------------------------------------------------------------------
 PANEL_TEMP_COEFF_PER_C = -0.004   # output drops ~0.4% per degC above 25 degC (typical silicon)

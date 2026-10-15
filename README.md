@@ -25,7 +25,22 @@ Check everything works:
 .venv\Scripts\python -m pytest backend/tests
 ```
 
-_(Demo run command added on Day 4.)_
+Run the demo (opens http://127.0.0.1:8000 in your browser), or double-click `run_demo.bat`:
+
+```bash
+.venv\Scripts\python run_demo.py
+```
+
+**Before a live pitch**, on the morning of the demo while online, save that day's forecast
+as the offline fallback. If the venue Wi-Fi fails, the dashboard then shows this forecast
+with a clear "Offline" banner. Commit the new file in `backend/data/demo_snapshot/`.
+
+```bash
+.venv\Scripts\python run_demo.py --save-snapshot
+```
+
+API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tomorrow;
+`/docs` lists every endpoint.
 
 ## How it is built
 
@@ -33,7 +48,9 @@ _(Demo run command added on Day 4.)_
 |---|---|---|
 | Solar forecast | Weather forecast → pvlib → kWh per rooftop per hour | `backend/app/solar.py` |
 | Demand forecast | ML model → kWh per buyer per hour | `backend/app/demand.py` |
-| Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` (Day 4) |
+| Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` |
+| Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
+| API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
 | Settings and sources | Every number, labelled REAL or ASSUMED | `backend/app/config.py` |
 | Example sites | Rooftops and buyers on the map | `backend/app/sites.py` |
 
