@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-15T22:37:50",
+  "title": "Design System: Helios",
+  "extensions": {
+    "colorMeta": {
+      "hoarding-ink": {
+        "role": "neutral",
+        "displayName": "Hoarding Ink",
+        "canonical": "#13212e",
+        "tonalRamp": [
+          "#080d12",
+          "#0b141c",
+          "#0f1a25",
+          "#13212e",
+          "#4e5862",
+          "#899096",
+          "#b8bcc0",
+          "#e3e4e6"
+        ]
+      },
+      "sun-amber": {
+        "role": "primary",
+        "displayName": "Sun Amber",
+        "canonical": "#f2a900",
+        "tonalRamp": [
+          "#614400",
+          "#916500",
+          "#c28700",
+          "#f2a900",
+          "#f5be40",
+          "#f8d480",
+          "#fbe5b2",
+          "#fdf5e0"
+        ]
+      },
+      "sun-pale": {
+        "role": "primary",
+        "displayName": "Sun Pale",
+        "canonical": "#fce7a6",
+        "tonalRamp": [
+          "#655c42",
+          "#978b64",
+          "#cab985",
+          "#fce7a6",
+          "#fdedbc",
+          "#fef3d2",
+          "#fef8e4",
+          "#fffcf4"
+        ]
+      },
+      "zinc-strip": {
+        "role": "neutral",
+        "displayName": "Zinc Strip",
+        "canonical": "#f2f3f4",
+        "tonalRamp": [
+          "#616162",
+          "#919292",
+          "#c2c2c3",
+          "#f2f3f4",
+          "#f5f6f7",
+          "#f8f9fa",
+          "#fbfbfc",
+          "#fdfefe"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#c9ced3",
+        "tonalRamp": [
+          "#505254",
+          "#797c7f",
+          "#a1a5a9",
+          "#c9ced3",
+          "#d6dade",
+          "#e4e6e9",
+          "#eff0f2",
+          "#f9f9fa"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The headline sentence only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel headings, preset action, scenario value, chart callouts."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "REAL / EXAMPLE / STAND-IN provenance tags."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "data-tween",
+        "value": "450ms exponential ease-out (1 - 2^(-10t)), settles by 500ms",
+        "purpose": "Chart areas and headline percentage moving to new numbers."
+      },
+      {
+        "name": "bar-transition",
+        "value": "transform .45s cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Buyer coverage bars."
+      },
+      {
+        "name": "button-transition",
+        "value": "background-color .15s ease-out",
+        "purpose": "Preset hover and pressed states."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "short-projector",
+        "value": "min-width 901px and max-height 800px"
+      },
+      {
+        "name": "stack",
+        "value": "max-width 900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Preset Button",
+      "kind": "button",
+      "refersTo": "button-preset",
+      "description": "The primary action: jump to the rooftop count where noon solar equals noon demand.",
+      "html": "<button class=\"ds-preset\"><span class=\"ds-preset-action\">Jump to noon match</span><span class=\"ds-preset-detail\">263 rooftops: solar = demand at noon</span></button>",
+      "css": ".ds-preset{display:grid;gap:.2em;text-align:left;background:#f2a900;color:#13212e;border:0;border-radius:0;padding:18px 32px;font-family:'Archivo Variable',Archivo,sans-serif;cursor:pointer;transition:background-color .15s ease-out}.ds-preset-action{font-stretch:75%;font-weight:800;font-size:40px;line-height:1}.ds-preset-detail{font-size:16px;font-weight:600}.ds-preset:hover{background:#ffbf26}.ds-preset:focus-visible{outline:3px solid #fff;outline-offset:3px}.ds-preset[aria-pressed=true]{background:transparent;color:#f2a900;box-shadow:inset 0 0 0 3px #f2a900}"
+    },
+    {
+      "name": "Scenario Slider",
+      "kind": "input",
+      "refersTo": "scenario-slider",
+      "description": "Fleet-size scenario, 0 to 1,000 rooftops; amber fill, square white thumb.",
+      "html": "<div class=\"ds-scenario\"><output class=\"ds-scenario-value\">263 <span>rooftops</span></output><input class=\"ds-range\" type=\"range\" min=\"0\" max=\"1000\" value=\"263\" style=\"--fill:26.3%\"></div>",
+      "css": ".ds-scenario{background:#13212e;color:#fff;padding:16px;font-family:'Archivo Variable',Archivo,sans-serif}.ds-scenario-value{font-stretch:75%;font-weight:800;font-size:48px;line-height:1}.ds-scenario-value span{font-size:.55em;font-weight:500;color:#b9c4ce}.ds-range{-webkit-appearance:none;appearance:none;width:100%;height:36px;background:transparent}.ds-range::-webkit-slider-runnable-track{height:10px;background:linear-gradient(to right,#f2a900 var(--fill),#3a4b5a var(--fill))}.ds-range::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;margin-top:-11px;background:#fff;border:4px solid #f2a900;border-radius:0}.ds-range:focus-visible{outline:3px solid #fff;outline-offset:4px}"
+    },
+    {
+      "name": "Provenance Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Small outlined REAL / EXAMPLE / STAND-IN label; one footnote explains all three.",
+      "html": "<span class=\"ds-tag\">STAND-IN</span>",
+      "css": ".ds-tag{display:inline-block;border:1px solid currentColor;padding:.05em .45em;line-height:1.3;font-family:'Archivo Variable',Archivo,sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6670}"
+    },
+    {
+      "name": "Chart Key",
+      "kind": "custom",
+      "refersTo": "chart-legend",
+      "description": "Legend swatches: ink line for demand, amber for solar used, ink hatching for grid top-up.",
+      "html": "<ul class=\"ds-legend\"><li><i class=\"ds-key ds-key-line\"></i>Buyer demand</li><li><i class=\"ds-key ds-key-sun\"></i>Solar used</li><li><i class=\"ds-key ds-key-hatch\"></i>Grid top-up</li></ul>",
+      "css": ".ds-legend{display:flex;gap:1.4rem;list-style:none;margin:0;padding:0;font-family:'Archivo Variable',Archivo,sans-serif;font-size:16px;color:#44515c}.ds-key{display:inline-block;width:1.15em;height:.8em;margin-right:.45em}.ds-key-line{height:4px;vertical-align:.22em;background:#13212e}.ds-key-sun{background:#f2a900;box-shadow:inset 0 0 0 1px #b97f00}.ds-key-hatch{background:repeating-linear-gradient(45deg,#13212e 0 2px,#fff 2px 5.5px);box-shadow:inset 0 0 0 1px #13212e}"
+    },
+    {
+      "name": "Panel Heading",
+      "kind": "custom",
+      "refersTo": "panel-heading",
+      "description": "Condensed signage heading for panels below the band.",
+      "html": "<h2 class=\"ds-panel-heading\">Tomorrow, hour by hour</h2>",
+      "css": ".ds-panel-heading{margin:0;font-family:'Archivo Variable',Archivo,sans-serif;font-stretch:75%;font-weight:800;font-size:30px;line-height:1.1;color:#0e1a24}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Development Hoarding",
+    "overview": "Helios is set like the signboard around a Malaysian development site: built to be read from the road, here from the back of a lit room on a projector. A night-ink vinyl band carries one giant sentence and the presenter's controls; white panels hold the 24-hour chart and a site plan; a zinc particulars strip states where every number comes from.",
+    "keyCharacteristics": [
+      "Amber always means solar",
+      "Grid top-up is ink hatching",
+      "Condensed heavy Archivo for distance reading",
+      "Square corners, 1px hairlines, no shadows",
+      "Every figure tagged REAL / EXAMPLE / STAND-IN"
+    ],
+    "rules": [
+      {
+        "name": "The Solar-Only Amber Rule",
+        "body": "Amber means solar everywhere; never status, links or decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hatch-Not-Hue Rule",
+        "body": "Grid top-up is ink hatching at 45 degrees, so the gap reads as missing, not as another source.",
+        "section": "colors"
+      },
+      {
+        "name": "The Distance Rule",
+        "body": "Anything read from the back of the room is condensed 800 and sized in vw.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every figure uses tabular numerals.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do keep amber for solar only",
+      "Do tag every example, assumed or stand-in figure",
+      "Do keep the Scenario label visible next to the slider",
+      "Do make animations land on the true numbers"
+    ],
+    "donts": [
+      "Don't add KPI tile grids, cards or shadows",
+      "Don't imply Helios controls the grid",
+      "Don't add green-washing imagery",
+      "Don't put small labels above headings",
+      "Don't use SDP branding"
+    ]
+  }
+}

@@ -12,10 +12,16 @@ backend/data/cache/
 
 # Frontend
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/ IS committed: the demo laptop only needs Python. Rebuild before committing frontend changes.
+
+# Design-review screenshots and browser-automation scratch files
+.impeccable/review/
+.playwright-mcp/
+frontend/.playwright-mcp/
 
 # OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+.impeccable/questions/

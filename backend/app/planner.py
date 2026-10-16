@@ -50,6 +50,30 @@ def noon_match_rooftops(one_roof: pd.DataFrame, need: pd.DataFrame) -> int | Non
     return int(min(max(round(noon_demand / solar_per_rooftop), config.FLEET_MIN), config.FLEET_MAX))
 
 
+def _months(period: str) -> str:
+    """'2026-04-01 to 2026-09-30' -> 'Apr-Sep 2026'"""
+    start, end = (dt.date.fromisoformat(p.strip()) for p in period.split(" to "))
+    return f"{start:%b}–{end:%b %Y}"
+
+
+def accuracy_small_print(accuracy: dict) -> dict:
+    """The short MAE line shown under each accuracy sentence on the dashboard."""
+    out = {}
+    if "solar" in accuracy:
+        s = accuracy["solar"]
+        live, simple = s["methods"][s["live_method"]], s["methods"][s["simple_guess"]]
+        out["solar"] = (f"Average error {live['mae_hourly_kwh_per_kwp']:.3f} vs {simple['mae_hourly_kwh_per_kwp']:.3f} "
+                        f"kWh per kWp per daylight hour. Held-out {_months(s['test_period'])}, checked against "
+                        f"satellite estimates, not rooftop meters."
+                        + (" Method chosen after testing." if s["ai_decision"].get("chosen_after_test") else ""))
+    if "demand" in accuracy:
+        d = accuracy["demand"]
+        model, simple = d["methods"]["model"], d["methods"][d["simple_guess"]]
+        out["demand"] = (f"Average error {model['mae_kwh']:.0f} vs {simple['mae_kwh']:.0f} kWh per building per hour. "
+                         f"Held-out {_months(d['test_period'])}, Florida stand-in buildings, measured temperatures.")
+    return out
+
+
 def _energy(kwh: float) -> str:
     return f"{kwh / 1000:,.1f} MWh" if kwh >= 1000 else f"{kwh:,.0f} kWh"
 
@@ -121,6 +145,7 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
                  "kwh_all_roofs": round(float(supply[r["id"]].sum()), 1)} for r in sites.ROOFTOPS]
 
     accuracy = reports.load_accuracy()
+    small_print = accuracy_small_print(accuracy)
     return {
         "day": info["day"],
         "headline": headline,
@@ -140,7 +165,8 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
         "hours": hours,
         "buyers": buyers,
         "rooftops": rooftops,
-        "accuracy": {k: {"sentence": v["sentence"], "detail": v["detail"]} for k, v in accuracy.items()},
+        "accuracy": {k: {"sentence": v["sentence"], "detail": v["detail"], "small_print": small_print.get(k)}
+                     for k, v in accuracy.items()},
         "carbon_factor": {"kg_per_kwh": config.GRID_EMISSION_FACTOR_KG_PER_KWH,
                           "source": config.GRID_EMISSION_FACTOR_SOURCE, "tag": "REAL"},
         "rule": ("Each hour, every rooftop's solar is shared among buyers within "

@@ -1,0 +1,2 @@
+# Built dashboard files: store exactly as built (no line-ending conversion, no noisy diffs)
+frontend/dist/** -text -diff

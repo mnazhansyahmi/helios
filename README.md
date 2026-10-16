@@ -12,12 +12,22 @@ grid; TNB does that.
 
 ## Quick start (Windows)
 
-One-time setup, from this folder:
+One-time setup, from this folder. The demo laptop only needs **Python 3.11+**: the built
+dashboard (`frontend/dist/`) is committed, so Node.js is not needed to run the demo.
 
 ```bash
 python -m venv .venv
 .venv\Scripts\python -m pip install -r backend/requirements.txt
 ```
+
+> **Changing the dashboard?** Anyone who edits files in `frontend/` needs Node.js 20+.
+> **Rebuild before committing any frontend change**, and commit the updated
+> `frontend/dist/` together with your source changes. Otherwise the demo keeps showing
+> the old dashboard.
+>
+> ```bash
+> cd frontend && npm install && npm run build
+> ```
 
 Check everything works:
 
@@ -51,6 +61,11 @@ API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tom
 | Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` |
 | Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
 | API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
+| Dashboard | React + Vite: headline, preset, slider, chart, map, particulars | `frontend/src/` |
+| Design system | Visual rules for anyone extending the dashboard | `DESIGN.md`, `PRODUCT.md` |
+
+Working on the dashboard with live reload: start the API with `python run_demo.py --no-browser`,
+then run `npm run dev` in `frontend/` and open the address it prints.
 | Settings and sources | Every number, labelled REAL or ASSUMED | `backend/app/config.py` |
 | Example sites | Rooftops and buyers on the map | `backend/app/sites.py` |
 

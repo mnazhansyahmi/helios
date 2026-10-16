@@ -1,0 +1,72 @@
+import { useEffect, useRef, useState } from "react";
+import { energy, mass } from "../format.js";
+
+/** Animates a number towards its new value (fast start, gentle stop). Off for reduced motion. */
+function useCountUp(target, durationMs = 450) {
+  const [shown, setShown] = useState(target);
+  const fromRef = useRef(target);
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const from = fromRef.current;
+    if (reduce || from === target) {
+      setShown(target);
+      fromRef.current = target;
+      return;
+    }
+    let frame;
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / durationMs);
+      const eased = 1 - Math.pow(2, -10 * t); // exponential ease-out
+      const value = from + (target - from) * (t === 1 ? 1 : eased);
+      setShown(value);
+      fromRef.current = value;
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    // Safety net: browsers pause animation frames when the page isn't being painted
+    // (hidden tab, busy laptop). Always land on the true number anyway.
+    const settle = setTimeout(() => {
+      cancelAnimationFrame(frame);
+      setShown(target);
+      fromRef.current = target;
+    }, durationMs + 50);
+    return () => { cancelAnimationFrame(frame); clearTimeout(settle); };
+  }, [target, durationMs]);
+  return shown;
+}
+
+/**
+ * The sentence judges read first. Numbers about solar are amber (the solar colour);
+ * the grid and CO2 figures stay white.
+ */
+export default function Headline({ plan }) {
+  const { totals, scenario } = plan;
+  const coverage = useCountUp(totals.coverage_pct);
+  const rooftops = scenario.rooftops.toLocaleString("en-MY");
+
+  if (scenario.rooftops === 0) {
+    return (
+      <div className="headline">
+        <h1>
+          With no rooftops, all <span className="figure">{energy(totals.demand_kwh)}</span> of
+          tomorrow's buyer demand comes from the grid.
+        </h1>
+      </div>
+    );
+  }
+
+  return (
+    <div className="headline">
+      <h1>
+        With {rooftops} rooftops, solar covers{" "}
+        <span className="figure figure-sun">{Math.round(coverage)}%</span> of tomorrow's buyer demand.
+      </h1>
+      <p className="headline-sub">
+        <span className="figure">{energy(totals.grid_topup_kwh)}</span> still comes from the grid
+        <span className="sep" aria-hidden="true"> · </span>
+        about <span className="figure">{mass(totals.co2_avoided_kg)}</span> CO<sub>2</sub> avoided
+      </p>
+    </div>
+  );
+}
