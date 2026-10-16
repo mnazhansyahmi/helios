@@ -140,13 +140,16 @@ for reading, so the page stays one voice.
 
 ## Layout
 
-One screen at 1920×1080 with no scrolling: band (~37%), panels (~43%), particulars (~20%).
-At 1280×720 the band tightens, building notes hide, and the footnote scrolls. The band is a
+One screen with no scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768: band (~33–37%),
+panels (fill the rest, chart never under 215px), particulars (~20–30%). Screens 820px tall or
+less use a short mode: tighter band and strips, a smaller slider, building notes hidden. The band is a
 two-column grid: headline left, presenter controls (preset over slider) right. Panels split
 1.8 : 1 (chart : site plan). The particulars strip has three buyer columns plus the accuracy
 column, with the footnote spanning below. All type and padding scale with `clamp()` and `vw`.
 Side gutter: clamp(16px, 2.6vw, 56px). Below 900px wide everything stacks in reading order,
-and the chart drops to four axis ticks and a single callout. The scrollbar gutter is reserved
+and a chart narrower than 520px drops to four axis ticks and no region labels. The afternoon
+callout extends right when it fits and flips left when it doesn't (late peaks on small
+screens), in which case the solar-peak text is dropped so the two never overlap. The scrollbar gutter is reserved
 permanently so the page width never shifts.
 
 ## Elevation & Depth

@@ -133,7 +133,8 @@ function useTweenedRows(rows, durationMs = 450) {
 
 export default function DayChart({ plan, onHourHover }) {
   const [boxRef, { width, height }] = useBoxSize();
-  const narrow = width > 0 && width < 640; // phones: fewer ticks, fewer labels
+  const narrow = width > 0 && width < 520; // phones: fewer ticks, no region labels
+  const yAxisWidth = narrow ? 48 : 64;
   const rows = plan.hours;
   const shownRows = useTweenedRows(rows); // what is drawn; annotations use the final numbers
   const { peaks } = plan;
@@ -150,6 +151,15 @@ export default function DayChart({ plan, onHourHover }) {
   const peakLines = gapAtPeak >= 1
     ? [`${hourName(peakRow.hour)}: demand peaks`, `${kwh(gapAtPeak)} from the grid`]
     : [`${hourName(peakRow.hour)}: demand peaks`, "fully covered by solar"];
+
+  // Does the afternoon callout fit to the RIGHT of its dot? (late peaks on small screens don't)
+  // If not, it flips to the left, and the solar callout's text is dropped so the two can't overlap.
+  const calloutFontPx = Math.min(21, Math.max(14, window.innerWidth * 0.0105)); // matches .callout in CSS
+  const plotLeft = 4 + yAxisWidth;
+  const plotRight = width - (narrow ? 12 : 28);
+  const peakX = plotLeft + (peakRow.hour / 23) * (plotRight - plotLeft);
+  const calloutWidthPx = Math.max(...peakLines.map((line) => line.length)) * calloutFontPx * 0.55;
+  const afternoonFitsRight = peakX + 12 + calloutWidthPx <= width;
 
   // Direct label inside the hatching, at the daylight-afternoon hour with the biggest gap
   const gapRow = rows.filter((r) => r.hour >= 13 && r.hour <= 18)
@@ -181,7 +191,7 @@ export default function DayChart({ plan, onHourHover }) {
           <CartesianGrid vertical={false} stroke={GRID_LINE} />
           <XAxis dataKey="hour" ticks={narrow ? [0, 6, 12, 18] : [0, 3, 6, 9, 12, 15, 18, 21]} tickFormatter={hourName}
                  tickLine={false} axisLine={{ stroke: INK }} interval={0} />
-          <YAxis domain={[0, yMax]} tickFormatter={number} tickLine={false} axisLine={false} width={narrow ? 48 : 64}
+          <YAxis domain={[0, yMax]} tickFormatter={number} tickLine={false} axisLine={false} width={yAxisWidth}
                  label={{ value: "kWh per hour", angle: 0, position: "insideTopLeft", dy: -44, dx: 8, className: "axis-title" }} />
           <Tooltip content={<HourTooltip />} cursor={{ stroke: INK, strokeWidth: 1 }} isAnimationActive={false} />
 
@@ -206,12 +216,13 @@ export default function DayChart({ plan, onHourHover }) {
           {solarRow && (
             <ReferenceDot x={solarRow.hour} y={solarRow.solar_kwh} r={7} fill={SUN} stroke={INK} strokeWidth={2}
                           ifOverflow="visible"
-                          label={narrow ? undefined
-                            : callout([`Solar peaks at ${hourName(solarRow.hour)}`, kwh(solarRow.solar_kwh)], "end", { dx: -12 })} />
+                          label={afternoonFitsRight
+                            ? callout([`Solar peaks at ${hourName(solarRow.hour)}`, kwh(solarRow.solar_kwh)], "end", { dx: -12 })
+                            : undefined} />
           )}
           <ReferenceDot x={peakRow.hour} y={peakRow.demand_kwh} r={7} fill={INK} stroke="#FFFFFF" strokeWidth={2}
                         ifOverflow="visible"
-                        label={narrow ? callout(peakLines, "end", { dx: -12 }) : callout(peakLines, "start", { dx: 12 })} />
+                        label={afternoonFitsRight ? callout(peakLines, "start", { dx: 12 }) : callout(peakLines, "end", { dx: -12 })} />
         </ComposedChart>
       )}
       </div>

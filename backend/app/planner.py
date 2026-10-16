@@ -169,15 +169,16 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
                      for k, v in accuracy.items()},
         "carbon_factor": {"kg_per_kwh": config.GRID_EMISSION_FACTOR_KG_PER_KWH,
                           "source": config.GRID_EMISSION_FACTOR_SOURCE, "tag": "REAL"},
-        "rule": ("Each hour, every rooftop's solar is shared among buyers within "
-                 f"{config.MAX_MATCH_DISTANCE_KM:g} km in proportion to their need. "
-                 "Shortfall = grid top-up. An accounting split for planning; TNB runs the grid."),
+        "rule": (f"Each hour, rooftop solar is shared among buyers within {config.MAX_MATCH_DISTANCE_KM:g} km "
+                 "in proportion to need; any shortfall is grid top-up. An accounting split for planning."),
         "footnote": ("REAL = public measured or forecast data. EXAMPLE = made up for this demo. "
                      "STAND-IN = real data from elsewhere (Florida buildings) standing in for Elmina buildings."),
+        # Short forms for the dashboard footnote; full citations are in README.md and config.py.
         "sources": [
-            f"Weather: Open-Meteo, {config.WEATHER_MODEL} model (free non-commercial tier)",
-            "Building electricity use: Building Data Genome 2 (CC BY-SA), Orlando, Florida",
-            f"Grid emission factor: {config.GRID_EMISSION_FACTOR_SOURCE}",
-            "Solar physics: pvlib-python. Map: (c) OpenStreetMap contributors",
+            "Weather: Open-Meteo, ECMWF model (free non-commercial tier)",
+            "Buildings: Building Data Genome 2 (CC BY-SA), Orlando",
+            "Grid emission factor: Energy Commission Malaysia, Peninsular 2024 (provisional)",
+            "pvlib",
+            "Map © OpenStreetMap contributors",
         ],
     }

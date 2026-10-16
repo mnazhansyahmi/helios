@@ -275,13 +275,30 @@ input[type="range"]:focus-visible { outline: 3px solid var(--paper); outline-off
 }
 .band .tag { color: var(--band-text-2); }
 
-/* Short projector modes such as 1280x720: tighten the band so the chart keeps its height */
-@media (min-width: 901px) and (max-height: 800px) {
+/* Short projector and laptop modes (1280x720, 1280x800, 1366x768, 1024x768): everything must
+   still fit one screen. Tighten the band and strips; the chart keeps at least 215px. */
+@media (min-width: 901px) and (max-height: 820px) {
+  .band { padding-top: 12px; padding-bottom: 14px; row-gap: 8px; }
   .headline h1 { font-size: clamp(28px, 3.4vw, 72px); }
   .headline-sub { font-size: clamp(16px, 1.55vw, 34px); }
-  .chart-box { min-height: 220px; }
-  .site-map { min-height: 190px; }
+  .controls { gap: 10px; }
+  .preset { padding: 10px 18px; }
+  .preset-action { font-size: clamp(22px, 2vw, 40px); }
+  input[type="range"] { height: 28px; }
+  input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; margin-top: -8px; }
+  input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; }
+  .preset-tick { top: 28px; }
+  .slider-wrap { padding-bottom: 1.15em; }
+  .panel { padding-top: 8px; padding-bottom: 8px; }
+  .chart-box { min-height: 215px; }
+  .site-map { min-height: 165px; }
+  .map-key { margin-top: .3rem; }
+  .buyer, .accuracy { padding-top: 8px; padding-bottom: 8px; }
+  .buyer-coverage strong { font-size: 1.6em; }
+  .buyer-numbers { font-size: 12px; }
   .buyer-note { display: none; }
+  .accuracy { gap: .35rem; }
+  .footnote { padding-top: .35rem; padding-bottom: .45rem; }
 }
 
 /* Phones and narrow windows: everything stacks */

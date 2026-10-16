@@ -49,7 +49,7 @@ export default function Particulars({ plan }) {
       <section className="footnote" aria-label="Data labels and sources">
         <p><b>REAL</b> public measured or forecast data · <b>EXAMPLE</b> made up for this demo ·{" "}
           <b>STAND-IN</b> real buildings in Florida standing in for Elmina buildings. {plan.rule}</p>
-        <p>{plan.sources.join(" · ")}. CO<sub>2</sub> factor {plan.carbon_factor.kg_per_kwh} kg per kWh.</p>
+        <p>{plan.sources.join(" · ")} · {plan.carbon_factor.kg_per_kwh.toFixed(3)} kg CO<sub>2</sub> per kWh.</p>
       </section>
     </footer>
   );
