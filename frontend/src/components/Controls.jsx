@@ -24,7 +24,7 @@ export default function Controls({ scenario, rooftops, onChange }) {
         <span className="preset-action">{atPreset ? "At the noon match" : "Jump to noon match"}</span>
         <span className="preset-detail">
           {preset == null
-            ? "No noon sun in tomorrow's forecast"
+            ? "No noon sun in this day's forecast"
             : `${preset.toLocaleString("en-MY")} rooftops: solar = demand at ${hourName(presetHour)}`}
         </span>
       </button>

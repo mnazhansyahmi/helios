@@ -99,7 +99,33 @@
         "forecast_ai": 0.0302
       }
     },
-    "truth": "Himawari satellite sunlight (Open-Meteo) converted to kWh with the same pvlib model"
+    "truth": "Himawari satellite sunlight (Open-Meteo) converted to kWh with the same pvlib model",
+    "by_lead_days": {
+      "leads": {
+        "1": {
+          "mae_hourly_kwh_per_kwp": 0.0622,
+          "improvement_pct": 10
+        },
+        "2": {
+          "mae_hourly_kwh_per_kwp": 0.0669,
+          "improvement_pct": 4
+        },
+        "3": {
+          "mae_hourly_kwh_per_kwp": 0.0668,
+          "improvement_pct": 4
+        },
+        "4": {
+          "mae_hourly_kwh_per_kwp": 0.0678,
+          "improvement_pct": 2
+        },
+        "5": {
+          "mae_hourly_kwh_per_kwp": 0.0682,
+          "improvement_pct": 2
+        }
+      },
+      "simple_guess_mae": 0.0695,
+      "test_daylight_hours": 2144
+    }
   },
   "demand": {
     "title": "Demand forecast, hourly, per buyer building",

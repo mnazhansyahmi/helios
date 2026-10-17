@@ -33,6 +33,12 @@ def test_offline_plan_uses_saved_forecast_and_says_so(offline_client):
     assert len(plan["hours"]) == 24
 
 
+def test_plan_says_which_day_and_how_far_ahead(offline_client):
+    plan = offline_client.get("/api/plan").json()
+    assert isinstance(plan["lead_days"], int) and isinstance(plan["is_next_working_day"], bool)
+    assert plan["accuracy"]["solar"]["small_print"]
+
+
 def test_default_scenario_is_50_rooftops(offline_client):
     plan = offline_client.get("/api/plan").json()
     assert plan["scenario"]["rooftops"] == config.FLEET_DEFAULT == 50

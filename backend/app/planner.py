@@ -17,8 +17,21 @@ _BASE_CACHE: dict = {}          # day -> (time created, base data)
 BASE_CACHE_SECONDS = 30 * 60
 
 
-def tomorrow() -> dt.date:
-    return (pd.Timestamp.now(tz=config.TIMEZONE) + pd.Timedelta(days=1)).date()
+def local_today() -> dt.date:
+    return pd.Timestamp.now(tz=config.TIMEZONE).date()
+
+
+def next_working_day(today: dt.date | None = None) -> dt.date:
+    """
+    The day the dashboard plans by default: the next day that is not a Saturday, Sunday
+    or Selangor public holiday (Elmina is in Selangor). On a Friday that is Monday.
+    """
+    today = today or local_today()
+    holidays = demand.malaysia_holidays([today.year, today.year + 1])
+    day = today + dt.timedelta(days=1)
+    while day.weekday() >= 5 or day in holidays:
+        day += dt.timedelta(days=1)
+    return day
 
 
 def day_base(day: dt.date) -> dict:
@@ -56,21 +69,43 @@ def _months(period: str) -> str:
     return f"{start:%b}–{end:%b %Y}"
 
 
-def accuracy_small_print(accuracy: dict) -> dict:
-    """The short MAE line shown under each accuracy sentence on the dashboard."""
+def solar_accuracy_for_lead(s: dict, lead_days: int) -> tuple[str, str]:
+    """
+    Solar accuracy sentence + small print for a forecast made `lead_days` ahead.
+    Accuracy falls with lead time (see backend/ml/04_eval_solar_lead_time.py), so a
+    Monday plan made on Friday must not borrow the 1-day-ahead score.
+    """
+    honesty = (f" Held-out {_months(s['test_period'])} vs satellite estimates, not rooftop meters."
+               + (" Method chosen after testing." if s["ai_decision"].get("chosen_after_test") else ""))
+    leads = s.get("by_lead_days", {}).get("leads", {})
+    if lead_days <= 1 or not leads:
+        live, simple = s["methods"][s["live_method"]], s["methods"][s["simple_guess"]]
+        return s["sentence"], (f"Avg error {live['mae_hourly_kwh_per_kwp']:.3f} vs "
+                               f"{simple['mae_hourly_kwh_per_kwp']:.3f} kWh/kWp per daylight hour, "
+                               f"1 day ahead.{honesty}")
+    scored = leads[str(min(lead_days, max(int(k) for k in leads)))]  # scored up to 5 days ahead
+    pct = scored["improvement_pct"]
+    sentence = (f"Solar forecast, {lead_days} days ahead: {pct}% better than a simple guess."
+                if pct > 0 else f"Solar forecast, {lead_days} days ahead: no better than a simple guess.")
+    small = (f"Avg error {scored['mae_hourly_kwh_per_kwp']:.3f} vs {s['by_lead_days']['simple_guess_mae']:.3f} "
+             f"kWh/kWp per daylight hour; accuracy falls with lead time "
+             f"(1 day ahead: {leads['1']['improvement_pct']}% better).{honesty}")
+    return sentence, small
+
+
+def accuracy_for_dashboard(accuracy: dict, lead_days: int) -> dict:
+    """The accuracy sentence and short MAE line shown for each forecast on the dashboard."""
     out = {}
     if "solar" in accuracy:
-        s = accuracy["solar"]
-        live, simple = s["methods"][s["live_method"]], s["methods"][s["simple_guess"]]
-        out["solar"] = (f"Average error {live['mae_hourly_kwh_per_kwp']:.3f} vs {simple['mae_hourly_kwh_per_kwp']:.3f} "
-                        f"kWh per kWp per daylight hour. Held-out {_months(s['test_period'])}, checked against "
-                        f"satellite estimates, not rooftop meters."
-                        + (" Method chosen after testing." if s["ai_decision"].get("chosen_after_test") else ""))
+        sentence, small = solar_accuracy_for_lead(accuracy["solar"], lead_days)
+        out["solar"] = {"sentence": sentence, "small_print": small, "detail": accuracy["solar"]["detail"]}
     if "demand" in accuracy:
         d = accuracy["demand"]
         model, simple = d["methods"]["model"], d["methods"][d["simple_guess"]]
-        out["demand"] = (f"Average error {model['mae_kwh']:.0f} vs {simple['mae_kwh']:.0f} kWh per building per hour. "
-                         f"Held-out {_months(d['test_period'])}, Florida stand-in buildings, measured temperatures.")
+        out["demand"] = {"sentence": d["sentence"], "detail": d["detail"],
+                         "small_print": (f"Average error {model['mae_kwh']:.0f} vs {simple['mae_kwh']:.0f} kWh per "
+                                         f"building per hour. Held-out {_months(d['test_period'])}, Florida stand-in "
+                                         f"buildings, measured temperatures.")}
     return out
 
 
@@ -111,6 +146,8 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
 
     data_day = dt.date.fromisoformat(info["day"])
     day_name = f"{data_day:%a} {data_day.day} {data_day:%b}"
+    today = local_today()
+    lead_days = (data_day - today).days   # how far ahead the forecast is (<= 0 for an old saved forecast)
     if rooftop_count == 0:
         headline = f"{day_name}: with no rooftops in the scenario, all {_energy(total_demand)} comes from the grid."
     else:
@@ -144,10 +181,10 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
                  "kwh_one_roof": round(float(base["one_roof"][r["id"]].sum()), 1),
                  "kwh_all_roofs": round(float(supply[r["id"]].sum()), 1)} for r in sites.ROOFTOPS]
 
-    accuracy = reports.load_accuracy()
-    small_print = accuracy_small_print(accuracy)
     return {
         "day": info["day"],
+        "lead_days": lead_days,
+        "is_next_working_day": data_day == next_working_day(today),
         "headline": headline,
         "weather": {**info, "tag": "REAL",
                     "banner": None if info["source"] == "live" else
@@ -165,8 +202,7 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
         "hours": hours,
         "buyers": buyers,
         "rooftops": rooftops,
-        "accuracy": {k: {"sentence": v["sentence"], "detail": v["detail"], "small_print": small_print.get(k)}
-                     for k, v in accuracy.items()},
+        "accuracy": accuracy_for_dashboard(reports.load_accuracy(), lead_days),
         "carbon_factor": {"kg_per_kwh": config.GRID_EMISSION_FACTOR_KG_PER_KWH,
                           "source": config.GRID_EMISSION_FACTOR_SOURCE, "tag": "REAL"},
         "rule": (f"Each hour, rooftop solar is shared among buyers within {config.MAX_MATCH_DISTANCE_KM:g} km "

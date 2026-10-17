@@ -3,8 +3,8 @@ Start the Helios demo with one command, from the HELIOS folder:
 
     python run_demo.py                  start the server and open the dashboard in a browser
     python run_demo.py --no-browser     start the server only
-    python run_demo.py --save-snapshot  (while ONLINE) save tomorrow's forecast as the
-                                        offline fallback that ships in git
+    python run_demo.py --save-snapshot  (while ONLINE) save the next working day's forecast
+                                        as the offline fallback that ships in git
 
 Before a live pitch: run --save-snapshot on the morning of the demo, so that if the
 venue Wi-Fi fails the dashboard shows that morning's forecast (with a clear banner).
@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT / "backend"))
 
 def save_snapshot() -> None:
     from app import config, planner, weather
-    day = planner.tomorrow()
+    day = planner.next_working_day()
     _, info = weather.get_forecast_for_day(day)
     if info["source"] != "live":
         sys.exit("Could not download a fresh forecast (offline?). Snapshot NOT updated.")

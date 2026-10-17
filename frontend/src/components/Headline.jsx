@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { energy, mass } from "../format.js";
+import { energy, mass, weekdayName } from "../format.js";
 
 /** Animates a number towards its new value (fast start, gentle stop). Off for reduced motion. */
 function useCountUp(target, durationMs = 450) {
@@ -44,13 +44,14 @@ export default function Headline({ plan }) {
   const { totals, scenario } = plan;
   const coverage = useCountUp(totals.coverage_pct);
   const rooftops = scenario.rooftops.toLocaleString("en-MY");
+  const day = weekdayName(plan.day); // e.g. "Monday": the day being planned
 
   if (scenario.rooftops === 0) {
     return (
       <div className="headline">
         <h1>
           With no rooftops, all <span className="figure">{energy(totals.demand_kwh)}</span> of
-          tomorrow's buyer demand comes from the grid.
+          {" "}{day}'s buyer demand comes from the grid.
         </h1>
       </div>
     );
@@ -60,7 +61,7 @@ export default function Headline({ plan }) {
     <div className="headline">
       <h1>
         With {rooftops} rooftops, solar covers{" "}
-        <span className="figure figure-sun">{Math.round(coverage)}%</span> of tomorrow's buyer demand.
+        <span className="figure figure-sun">{Math.round(coverage)}%</span> of {day}'s buyer demand.
       </h1>
       <p className="headline-sub">
         <span className="figure">{energy(totals.grid_topup_kwh)}</span> still comes from the grid

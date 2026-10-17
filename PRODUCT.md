@@ -25,7 +25,7 @@ aggregator team, who must match rooftop solar supply with buyer demand hour by h
 
 Helios is an AI planning tool on top of CREAM in City of Elmina. SDP leases house rooftops,
 installs solar, and sends the power through TNB's grid to SDP's commercial buildings within
-5 km. Helios forecasts hourly rooftop solar and hourly buyer demand for tomorrow, shares the
+5 km. Helios forecasts hourly rooftop solar and hourly buyer demand for the next working day, shares the
 solar between buyers each hour, and shows the grid top-up gap and estimated CO2 avoided.
 Success in the pitch: judges grasp the supply/demand mismatch (solar peaks at noon, demand
 peaks in the afternoon) and trust the numbers because their limits are stated.

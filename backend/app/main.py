@@ -22,9 +22,9 @@ app = FastAPI(title="Helios API", description="Solar and demand planning prototy
 @app.get("/api/plan")
 def plan(rooftops: int = Query(config.FLEET_DEFAULT, ge=config.FLEET_MIN, le=config.FLEET_MAX),
          day: dt.date | None = None):
-    """Hourly plan for one day (default: tomorrow, Malaysia time) and a fleet-size scenario."""
+    """Hourly plan for one day (default: the next working day in Selangor) and a fleet-size scenario."""
     try:
-        return planner.build_plan(day or planner.tomorrow(), rooftops)
+        return planner.build_plan(day or planner.next_working_day(), rooftops)
     except RuntimeError as error:   # e.g. no internet AND no saved forecast
         raise HTTPException(status_code=503, detail=str(error))
 

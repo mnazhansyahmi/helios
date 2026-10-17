@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchPlan } from "./api.js";
-import { hourName, hourRange, longDate } from "./format.js";
+import { fullDate, hourName, hourRange, leadText, weekdayName } from "./format.js";
 import Controls from "./components/Controls.jsx";
 import DayChart from "./components/DayChart.jsx";
 import Headline from "./components/Headline.jsx";
@@ -39,7 +39,7 @@ export default function App() {
               <button type="button" className="preset preset-small" onClick={() => load(rooftops)}>Try again</button>
             </div>
           ) : (
-            <div className="headline"><h1 className="loading">Loading tomorrow's forecast…</h1></div>
+            <div className="headline"><h1 className="loading">Loading the next working day's forecast…</h1></div>
           )}
         </header>
       </div>
@@ -56,8 +56,15 @@ export default function App() {
         <div className="band-meta">
           <p className="wordmark">Helios</p>
           <p className="band-context">Planning prototype for CREAM, City of Elmina. Helios plans; TNB runs the grid.</p>
+          {/* The planned day, stated plainly: the default is the next working day in Selangor */}
           <p className="band-date">
-            Forecast for <strong>{longDate(plan.day)}</strong> <Tag kind="REAL" />
+            <span className="band-date-label">Plan for</span>{" "}
+            <strong className="band-date-day">{fullDate(plan.day)}</strong>{" "}
+            <span>
+              {plan.is_next_working_day && <span className="band-date-why">next working day · </span>}
+              {plan.lead_days >= 1 ? leadText(plan.lead_days) : "saved forecast"}
+            </span>{" "}
+            <Tag kind="REAL" />
           </p>
           {offline && (
             <p className="stamp" role="status">
@@ -73,7 +80,7 @@ export default function App() {
       <main className="panels">
         <section className="panel panel-chart" aria-labelledby="chart-title">
           <div className="panel-head">
-            <h2 id="chart-title">Tomorrow, hour by hour</h2>
+            <h2 id="chart-title">{weekdayName(plan.day)}, hour by hour</h2>
             <ul className="legend" aria-label="Chart key">
               <li><i className="key key-line" />Buyer demand <Tag kind="STAND-IN" /></li>
               <li><i className="key key-sun" />Solar used</li>
@@ -93,7 +100,7 @@ export default function App() {
           <p className="map-key">
             <span><i className="key key-roof" />Rooftops, size = solar {hourRange(mapHour)}</span>
             <span><i className="key key-buyer" />Buyer, amber = share met by solar</span>
-            <span>All within 5 km</span>
+            <span className="map-key-range">All within 5 km</span>
           </p>
         </section>
       </main>

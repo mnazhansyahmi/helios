@@ -73,7 +73,12 @@ button { font: inherit; }
   color: var(--paper); font-size: clamp(17px, 1.25vw, 25px);
 }
 .band-context { flex: 1 1 24rem; }
-.band-date strong { color: var(--paper); font-weight: 600; }
+.band-date-day {
+  color: var(--paper); font-stretch: 75%; font-weight: 800;
+  font-size: clamp(18px, 1.45vw, 30px); line-height: 1; vertical-align: -.08em;
+}
+/* Narrower screens: the bold date speaks for itself, so the top row stays on one line */
+@media (max-width: 1200px) { .band-date-label, .band-date-why { display: none; } }
 .stamp {
   border: 2px solid var(--sun); color: var(--sun);
   padding: .15em .6em; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
@@ -299,6 +304,17 @@ input[type="range"]:focus-visible { outline: 3px solid var(--paper); outline-off
   .buyer-note { display: none; }
   .accuracy { gap: .35rem; }
   .footnote { padding-top: .35rem; padding-bottom: .45rem; }
+}
+
+/* Small projector screens (e.g. 1024x768): narrow AND short. The map key drops its
+   "within 5 km" note (the footnote's matching rule says it) and the accuracy column runs
+   beside the footnote, so the chart keeps its height. */
+@media (min-width: 901px) and (max-width: 1200px) and (max-height: 820px) {
+  .map-key-range { display: none; }
+  .site-map { min-height: 150px; }
+  .chart-box { min-height: 205px; }  /* room for the legend's 4th item when solar overshoots */
+  .particulars { grid-template-areas: "buyers accuracy" "foot accuracy"; }
+  .footnote { border-right: 1px solid var(--rule); }
 }
 
 /* Phones and narrow windows: everything stacks */

@@ -22,8 +22,21 @@ export function hourName(h) {
 /** "15:00-16:00" style range for one hourly bucket (hours are labelled by their start). */
 export const hourRange = (h) => `${String(h).padStart(2, "0")}:00–${String((h + 1) % 24).padStart(2, "0")}:00`;
 
-/** "2026-10-16" -> "Fri 16 Oct 2026" */
-export function longDate(isoDay) {
-  const d = new Date(`${isoDay}T12:00:00`);
-  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December"];
+
+/** "2026-10-19" -> "Monday" (dates are plain calendar days, no time zone involved) */
+export function weekdayName(isoDay) {
+  const [y, m, d] = isoDay.split("-").map(Number);
+  return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
 }
+
+/** "2026-10-19" -> "Monday 19 October 2026" */
+export function fullDate(isoDay) {
+  const [y, m, d] = isoDay.split("-").map(Number);
+  return `${weekdayName(isoDay)} ${d} ${MONTHS[m - 1]} ${y}`;
+}
+
+/** How far ahead the forecast was made: 1 -> "forecast 1 day ahead" */
+export const leadText = (days) => `forecast ${days} day${days === 1 ? "" : "s"} ahead`;

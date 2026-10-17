@@ -49,7 +49,11 @@ with a clear "Offline" banner. Commit the new file in `backend/data/demo_snapsho
 .venv\Scripts\python run_demo.py --save-snapshot
 ```
 
-API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tomorrow;
+The dashboard plans the **next working day** in Selangor (skipping weekends and Selangor
+public holidays), so on a Friday it shows Monday, using a forecast made 3 days ahead.
+
+API (while running): `/api/plan?rooftops=50` returns the whole dashboard for that day
+(add `&day=2026-10-23` for another date);
 `/docs` lists every endpoint.
 
 ## How it is built
@@ -75,6 +79,7 @@ ML pipeline (only needed to rebuild the models; outputs are committed):
 .venv\Scripts\python backend/ml/01_get_data.py      # download public data
 .venv\Scripts\python backend/ml/02_eval_solar.py    # solar accuracy -> backend/reports/accuracy.json
 .venv\Scripts\python backend/ml/03_train_demand.py  # demand models -> backend/models, accuracy.json
+.venv\Scripts\python backend/ml/04_eval_solar_lead_time.py  # solar accuracy 1-5 days ahead
 ```
 
 ## Accuracy so far (held-out data)
@@ -89,6 +94,11 @@ We also tested an AI correction of the weather forecast. It helped in every seas
 +14 W/m². So the demo uses the plain forecast. That choice was made *after* seeing the
 test results, and the dashboard says so. With live CREAM meter data, the correction could
 be retrained continuously; that is a next step, not part of this prototype.
+
+**Accuracy falls with lead time.** Same method, months and simple guess, forecast made
+1 day ahead: 10% better; 2–3 days ahead: 4% better; 4–5 days ahead: 2% better. A Monday
+plan made on a Friday is only slightly better than the average day for the month. The
+dashboard shows the score for the lead time actually in use (`04_eval_solar_lead_time.py`).
 
 **Demand, hourly per building: 23% better than a simple guess.** Average error 19.6 kWh
 per building per hour (8% of average use), vs 25.3 for "same hour last week" and 27.9 for
