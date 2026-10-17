@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import {
   Area, CartesianGrid, ComposedChart, Line, ReferenceDot, Tooltip, XAxis, YAxis,
 } from "recharts";
@@ -15,6 +15,21 @@ const GRID_LINE = "#E3E6E9";
 function niceCeil(value) {
   const power = 10 ** Math.floor(Math.log10(value));
   return [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10].map((m) => m * power).find((v) => v >= value);
+}
+
+// The chart's inner plot area inside its box, in pixels (the margins and axis sizes used below).
+// The Overview's hour marker uses it to sit exactly over the hour it points at.
+const NARROW_BELOW = 460;                 // phones: fewer ticks, no region labels
+const MARGIN_TOP = 64;                    // room for the two callouts
+const X_AXIS_HEIGHT = 30;                 // Recharts' default
+export function plotArea(width, height) {
+  const narrow = width > 0 && width < NARROW_BELOW;
+  return {
+    left: 4 + (narrow ? 48 : 64),
+    right: width - (narrow ? 12 : 28),
+    top: MARGIN_TOP,
+    bottom: height - 4 - X_AXIS_HEIGHT,
+  };
 }
 
 // Respect the "reduce motion" setting: no chart animation for people who asked for none.
@@ -131,9 +146,10 @@ function useTweenedRows(rows, durationMs = 450) {
   return shown;
 }
 
-export default function DayChart({ plan, onHourHover }) {
+function DayChart({ plan, onHourHover }) {
   const [boxRef, { width, height }] = useBoxSize();
-  const narrow = width > 0 && width < 520; // phones: fewer ticks, no region labels
+  const narrow = width > 0 && width < NARROW_BELOW;
+  const fewTicks = width > 0 && width < 600; // a smaller chart: every 6 hours on the axis
   const yAxisWidth = narrow ? 48 : 64;
   const rows = plan.hours;
   const shownRows = useTweenedRows(rows); // what is drawn; annotations use the final numbers
@@ -177,9 +193,9 @@ export default function DayChart({ plan, onHourHover }) {
           width={width}
           height={height}
           data={shownRows}
-          margin={{ top: 64, right: narrow ? 12 : 28, bottom: 4, left: 4 }}
-          onMouseMove={(state) => onHourHover(state?.activeLabel == null ? null : Number(state.activeLabel))}
-          onMouseLeave={() => onHourHover(null)}
+          margin={{ top: MARGIN_TOP, right: narrow ? 12 : 28, bottom: 4, left: 4 }}
+          onMouseMove={(state) => onHourHover?.(state?.activeLabel == null ? null : Number(state.activeLabel))}
+          onMouseLeave={() => onHourHover?.(null)}
         >
           <defs>
             {/* Grid top-up texture: ink hatching at 45 degrees */}
@@ -189,7 +205,7 @@ export default function DayChart({ plan, onHourHover }) {
             </pattern>
           </defs>
           <CartesianGrid vertical={false} stroke={GRID_LINE} />
-          <XAxis dataKey="hour" ticks={narrow ? [0, 6, 12, 18] : [0, 3, 6, 9, 12, 15, 18, 21]} tickFormatter={hourName}
+          <XAxis dataKey="hour" height={X_AXIS_HEIGHT} ticks={fewTicks ? [0, 6, 12, 18] : [0, 3, 6, 9, 12, 15, 18, 21]} tickFormatter={hourName}
                  tickLine={false} axisLine={{ stroke: INK }} interval={0} />
           <YAxis domain={[0, yMax]} tickFormatter={number} tickLine={false} axisLine={false} width={yAxisWidth}
                  label={{ value: "kWh per hour", angle: 0, position: "insideTopLeft", dy: -44, dx: 8, className: "axis-title" }} />
@@ -245,3 +261,5 @@ export default function DayChart({ plan, onHourHover }) {
     </div>
   );
 }
+
+export default memo(DayChart); // redrawn only when the plan changes, not on every frame of Play

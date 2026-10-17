@@ -50,7 +50,7 @@ const ELEVATION = THREE.MathUtils.degToRad(27);   // low enough that the round t
 const AZIMUTH = THREE.MathUtils.degToRad(18);
 const VIEW_FROM = new THREE.Vector3(Math.sin(AZIMUTH) * Math.cos(ELEVATION), Math.sin(ELEVATION), Math.cos(AZIMUTH) * Math.cos(ELEVATION));
 const LOOK_AT = new THREE.Vector3(0, 0.8, 0);
-const RING_TAG_ANGLE = THREE.MathUtils.degToRad(62);  // where on the rim the "5 km" tag sits (front right)
+const RING_TAG_ANGLE = THREE.MathUtils.degToRad(35);  // where on the rim the "5 km" tag sits (front right, clear of the key)
 
 // Sky through the day: cool blues only (amber means solar). [hour, colour at the top of the sky]
 const SKY = [[5, "#22304a"], [6, "#7f8fae"], [7, "#aebfd8"], [9, "#c9dcee"], [12, "#cfe4f4"], [15, "#c7dcef"],
@@ -390,24 +390,20 @@ function buildScene(models, rng) {
   return { scene, sun, hemi, panels, buyers };
 }
 
-/**
- * Fit the round town to the canvas as large as it can go, whatever the canvas's shape. The side
- * margins stay free for the labels on wide screens.
- */
+/** Fit the round town to the canvas as large as it can go, whatever the canvas's shape. */
 function frame(camera, width, height, buyers) {
   camera.position.copy(LOOK_AT).addScaledVector(VIEW_FROM, 300);
   camera.lookAt(LOOK_AT);
   camera.updateMatrixWorld();
   const points = [...circle(EDGE_R, 0, 48), ...circle(EDGE_R, -0.5, 48)];
-  buyers.forEach((b) => points.push(new THREE.Vector3(b.bx, BAR.h, b.bz), new THREE.Vector3(b.x, b.top, b.z)));
+  // headroom above the bars, so each label can sit right above its bar
+  buyers.forEach((b) => points.push(new THREE.Vector3(b.bx, BAR.h + 3.6, b.bz), new THREE.Vector3(b.x, b.top, b.z)));
   const box = new THREE.Box3();
   points.forEach((p) => box.expandByPoint(p.applyMatrix4(camera.matrixWorldInverse)));
-  const side = width > 900 ? Math.min(0.17 * width, 300) : 0;   // room for a label column each side
-  const aspect = Math.max(0.5, width - 2 * side) / height;
+  const aspect = width / height;
   let w = (box.max.x - box.min.x) * 1.02;
   let h = (box.max.y - box.min.y) * 1.06;  // a little air above and below the rim
   if (w / h > aspect) h = w / aspect; else w = h * aspect;
-  w *= width / Math.max(1, width - 2 * side);
   const cx = (box.max.x + box.min.x) / 2;
   const cy = (box.max.y + box.min.y) / 2;
   Object.assign(camera, { left: cx - w / 2, right: cx + w / 2, top: cy + h / 2, bottom: cy - h / 2 });
@@ -453,10 +449,10 @@ function crosses(box, x1, y1, x2, y2) {
 }
 
 /**
- * Put each label as close to its bar as it can go: try right of, left of, above and below the bar's
- * top, sliding outwards until the label is clear of the plaza, the bars, the other labels and the
- * fixed tags, and its leader line crosses no other bar or label; keep the try with the shortest
- * leader. sizes: measured label boxes by id.
+ * Put each label as close to its bar as it can go: try every spot on a 10 px grid around the bar's
+ * top, nearest first, and take the first one clear of the plaza, the bars, the other labels and the
+ * fixed tags whose leader line crosses no other bar or label. Runs only when the size changes, never
+ * during Play. sizes: measured label boxes by id.
  */
 function layoutLabels(labels, sizes, stage, fixed) {
   const placed = [];
@@ -464,32 +460,29 @@ function layoutLabels(labels, sizes, stage, fixed) {
   // the middle bar has the fewest free spots, so its label goes first; the outer ones then take the sides
   for (const l of [...labels].sort((a, b) => Math.abs(a.ax - stage.w / 2) - Math.abs(b.ax - stage.w / 2))) {
     const { w = 230, h = 92 } = sizes[l.id] ?? {};
-    const gap = 16;
-    const tries = [
-      { x: l.ax + gap, y: l.ay - h / 2, dx: 6, dy: 0 },        // right
-      { x: l.ax - gap - w, y: l.ay - h / 2, dx: -6, dy: 0 },   // left
-      { x: l.ax - w / 2, y: l.ay - gap - h, dx: 0, dy: -6 },   // above
-      { x: l.ax - w / 2, y: l.ay + gap, dx: 0, dy: 6 },        // below
-    ];
-    let best = null;
-    for (const c of tries) {
-      for (let k = 0; k < 300; k += 1) {
-        const box = { l: c.x + c.dx * k, t: c.y + c.dy * k };
-        box.r = box.l + w;
-        box.b = box.t + h;
-        if (box.l < 8 || box.t < 8 || box.r > stage.w - 8 || box.b > stage.h - 8) break;
-        if (coversPlaza(box, stage.plaza) || stage.bars.some((b) => overlaps(box, b))
-          || fixed.some((f) => overlaps(box, f)) || placed.some((p) => overlaps(box, p.box))) continue;
-        const lx = Math.max(box.l, Math.min(l.ax, box.r)); // where the leader leaves the label
-        const ly = Math.max(box.t, Math.min(l.ay, box.b));
-        const others = [...stage.bars.filter((_, i) => i !== l.bar), ...placed.map((p) => p.box)];
-        if (others.some((o) => crosses(o, lx, ly, l.ax, l.ay))) continue;
-        const length = Math.hypot(lx - l.ax, ly - l.ay);
-        if (!best || length < best.length) best = { box, lx, ly, length };
-        break;
+    const spots = [];                                    // label centres around the bar top, by leader length
+    for (let dx = -460; dx <= 460; dx += 10) {
+      for (let dy = -340; dy <= 340; dy += 10) {
+        const length = Math.hypot(Math.max(0, Math.abs(dx) - w / 2), Math.max(0, Math.abs(dy) - h / 2));
+        if (length >= 14) spots.push({ dx, dy, length });  // never on top of the bar's own top
       }
     }
-    if (best) placed.push({ ...l, box: best.box, lx: best.lx, ly: best.ly });
+    spots.sort((a, b) => a.length - b.length);
+    for (const { dx, dy } of spots) {
+      const box = { l: l.ax + dx - w / 2, t: l.ay + dy - h / 2 };
+      box.r = box.l + w;
+      box.b = box.t + h;
+      if (box.l < 8 || box.t < 8 || box.r > stage.w - 8 || box.b > stage.h - 8) continue;
+      if (stage.bars.some((b) => overlaps(box, b)) || fixed.some((f) => overlaps(box, f))
+        || placed.some((p) => overlaps(box, p.box)) || coversPlaza(box, stage.plaza)) continue;
+      const lx = Math.max(box.l, Math.min(l.ax, box.r)); // where the leader leaves the label
+      const ly = Math.max(box.t, Math.min(l.ay, box.b));
+      // the space just above a bar counts as that bar's, so no leader skims across another bar's top
+      const others = [...stage.bars.filter((_, i) => i !== l.bar).map((b) => ({ ...b, t: b.t - 30 })), ...placed.map((p) => p.box)];
+      if (others.some((o) => crosses(o, lx, ly, l.ax, l.ay))) continue;
+      placed.push({ ...l, box, lx, ly });
+      break;
+    }
   }
   return placed;
 }

@@ -5,12 +5,11 @@ export const TABS = [
   { id: "overview", label: "Overview" },
   { id: "solar", label: "Solar" },
   { id: "demand", label: "Demand" },
-  { id: "match", label: "Match" },
   { id: "about", label: "About the data" },
 ];
 
 /**
- * The shared top row on every tab: wordmark, the five tabs (keys 1-5 also switch them),
+ * The shared top row on every tab: wordmark, the four tabs (keys 1-4 also switch them),
  * and the planned day. Long and short date forms swap by screen width (see styles.css).
  */
 export default function TopBar({ tab, onTab, plan }) {

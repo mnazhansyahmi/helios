@@ -73,12 +73,13 @@ components:
 
 Helios is set like the signboard around a Malaysian development site: built to be read from
 the road, which here means from the back of a lit room on a projector. A night-ink vinyl band
-carries one giant sentence and the presenter's controls; white panels below hold the 24-hour
-chart (the hoarding's big "render") and a site plan; a zinc particulars strip states where
-every number comes from. The data is the loudest thing on the page, and nothing decorates it.
+carries the day in one sentence, the chosen hour in one giant line, and the presenter's controls;
+below, the hoarding's artist's impression (a 3D example township) stands beside the 24-hour
+chart; a zinc strip of buyer cards closes the page. The data is the loudest thing on the page,
+and nothing decorates it.
 
 Density is deliberately low at the top and rises toward the bottom: the band is for reading in
-two seconds, the particulars strip for anyone who walks up close. Rejected on purpose, at the
+two seconds, the buyer cards for anyone who walks up close. Rejected on purpose, at the
 user's request: the generic SaaS card grid, small dense text, anything implying Helios controls
 the grid, and green-washing imagery.
 
@@ -105,7 +106,7 @@ A restrained palette: ink, paper and greys, with one amber that is reserved for 
   print on white (7:1 and 5.6:1).
 - **Band Secondary** (#b9c4ce): secondary text on the ink band (9:1).
 - **Band Track** (#3a4b5a): slider track and separators on the band.
-- **Paper** (#ffffff): panels. **Zinc Strip** (#f2f3f4): the particulars strip.
+- **Paper** (#ffffff): panels. **Zinc Strip** (#f2f3f4): the buyer-card strip.
 - **Hairline** (#c9ced3): every divider, at 1px.
 - **Sun Edge** (#b97f00) and **Sun Pale** (#fce7a6): the amber area's edge, and unused solar.
 
@@ -140,17 +141,20 @@ for reading, so the page stays one voice.
 
 ## Layout
 
-One screen with no scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768: band (~33–37%),
-panels (fill the rest, chart never under 215px), particulars (~20–30%). Screens 820px tall or
-less use a short mode: tighter band and strips, a smaller slider, building notes hidden. The band is a
-two-column grid: headline left, presenter controls (preset over slider) right. Panels split
-1.8 : 1 (chart : site plan). The particulars strip has three buyer columns plus the accuracy
-column, with the footnote spanning below. All type and padding scale with `clamp()` and `vw`.
-Side gutter: clamp(16px, 2.6vw, 56px). Below 900px wide everything stacks in reading order,
-and a chart narrower than 520px drops to four axis ticks and no region labels. The afternoon
+Four tabs (keys 1–4): Overview, Solar, Demand, About the data. Every tab fits one screen with no
+scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768. The Overview tells the whole story:
+an ink band (the day line, the hour line, then one row of controls: Play, the hour slider, the
+rooftop slider, the noon-match preset), then the 3D township (left, 3 : 2) beside the 24-hour
+chart (right), then the buyer cards (three buyers plus a note on Helios and the tags). When a
+screen is crowded the day line shrinks first; the hour line and the chart never do. Screens
+820px tall or less use a short mode: tighter band and strips, a smaller slider. Accuracy lives on
+the Solar and Demand tabs; the 2D site plan only appears when the township cannot be drawn.
+All type and padding scale with `clamp()` and `vw`. Side gutter: clamp(16px, 2.6vw, 56px).
+Below 900px wide everything stacks in reading order; a chart narrower than 600px shows every
+6 hours on its axis, and one narrower than 460px also drops its region labels. The afternoon
 callout extends right when it fits and flips left when it doesn't (late peaks on small
-screens), in which case the solar-peak text is dropped so the two never overlap. The scrollbar gutter is reserved
-permanently so the page width never shifts.
+screens), in which case the solar-peak text is dropped so the two never overlap. Desktop screens
+reserve no scrollbar gutter (they never scroll); narrow ones do.
 
 ## Elevation & Depth
 
@@ -177,9 +181,9 @@ rectangles. Buyer markers are squares that fill amber from the bottom.
 - **Focus:** 3px white outline, 3px offset on the band; 3px ink outline on white.
 
 ### Scenario slider
-Big condensed rooftop count beside the always-visible "Scenario" label and EXAMPLE tag.
-10px track in band-track, amber fill up to the value, 32px square white thumb with a 4px
-amber border, a "noon match" tick under the track, end labels 0 and 1,000.
+Condensed rooftop count beside the always-visible "scenario, not a CREAM figure" note and
+EXAMPLE tag, above a 10px track in band-track with amber fill up to the value, a square white
+thumb with an amber border, and a "noon match" tick under the track.
 
 ### Provenance tag
 Small uppercase outlined label, REAL / EXAMPLE / STAND-IN; colour follows the surface's
@@ -191,10 +195,13 @@ under a 3.5px ink demand line. Direct labels SOLAR and GRID TOP-UP sit inside th
 two callouts mark the solar peak (extending left) and the afternoon demand peak with its grid
 top-up (extending right). The y-axis keeps headroom over demand, so the amber visibly grows
 as the slider moves. Data changes tween over 450ms with an exponential ease-out, and always
-land on the true numbers. A hidden table repeats the data for screen readers.
+land on the true numbers. A hidden table repeats the data for screen readers. On the Overview
+a 2px ink hour marker (with the hour in an ink tag at its foot) follows the hour slider and
+Play; it moves on its own layer, so the chart is never redrawn while the day plays.
 
-### Site plan
-OpenStreetMap tiles in faint greyscale; the map always frames the whole 5 km matching ring
+### Site plan (fallback only)
+Shown in the township's place when WebGL or the 3D models are unavailable. OpenStreetMap tiles
+in faint greyscale; the map always frames the whole 5 km matching ring
 (1.5px ink, labelled, centred on the buyers). Amber circles sized in metres by that hour's
 solar per rooftop group; ink-framed squares for buyers, filling amber with the share met by
 solar. Buyer labels sit on a paper backing with a hairline border (basemap names never show

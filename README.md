@@ -71,7 +71,7 @@ API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tha
 | Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` |
 | Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
 | API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
-| Dashboard | React + Vite, five tabs (keys 1–5): Overview (3D example township, three.js), Solar, Demand, Match (headline, preset, slider, chart, map), About the data | `frontend/src/` |
+| Dashboard | React + Vite, four tabs (keys 1–4): Overview (day and hour headlines, Play, hour and rooftop sliders, noon-match preset, 3D example township, 24-hour chart, buyer cards), Solar, Demand, About the data | `frontend/src/` |
 | Design system | Visual rules for anyone extending the dashboard | `DESIGN.md`, `PRODUCT.md` |
 
 Working on the dashboard with live reload: start the API with `python run_demo.py --no-browser`,

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { energy, mass, weekdayName } from "../format.js";
 
 /** Animates a number towards its new value (fast start, gentle stop). Off for reduced motion. */
@@ -37,37 +37,31 @@ function useCountUp(target, durationMs = 450) {
 }
 
 /**
- * The sentence judges read first. Numbers about solar are amber (the solar colour);
- * the grid and CO2 figures stay white.
+ * The whole planned day in one sentence, above the Overview's big hour line. The solar share is
+ * amber (the solar colour); the grid and CO2 figures stay white.
  */
-export default function Headline({ plan }) {
+function Headline({ plan }) {
   const { totals, scenario } = plan;
   const coverage = useCountUp(totals.coverage_pct);
-  const rooftops = scenario.rooftops.toLocaleString("en-MY");
   const day = weekdayName(plan.day); // e.g. "Monday": the day being planned
 
   if (scenario.rooftops === 0) {
     return (
-      <div className="headline">
-        <h1>
-          With no rooftops, all <span className="figure">{energy(totals.demand_kwh)}</span> of
-          {" "}{day}'s buyer demand comes from the grid.
-        </h1>
-      </div>
+      <h1 className="ov-day">
+        With no rooftops, all <span className="figure">{energy(totals.demand_kwh)}</span> of {day}'s buyer demand comes from the grid
+      </h1>
     );
   }
-
   return (
-    <div className="headline">
-      <h1>
-        With {rooftops} rooftops, solar covers{" "}
-        <span className="figure figure-sun">{Math.round(coverage)}%</span> of {day}'s buyer demand.
-      </h1>
-      <p className="headline-sub">
-        <span className="figure">{energy(totals.grid_topup_kwh)}</span> still comes from the grid
-        <span className="sep" aria-hidden="true"> · </span>
-        about <span className="figure">{mass(totals.co2_avoided_kg)}</span> CO<sub>2</sub> avoided
-      </p>
-    </div>
+    <h1 className="ov-day">
+      With {scenario.rooftops.toLocaleString("en-MY")} rooftops, solar covers{" "}
+      <span className="figure figure-sun">{Math.round(coverage)}%</span> of {day}'s buyer demand
+      <span className="sep" aria-hidden="true"> · </span>
+      <span className="figure">{energy(totals.grid_topup_kwh)}</span> from the grid
+      <span className="sep" aria-hidden="true"> · </span>
+      about <span className="figure">{mass(totals.co2_avoided_kg)}</span> CO<sub>2</sub> avoided
+    </h1>
   );
 }
+
+export default memo(Headline); // redrawn only when the plan changes, not on every frame of Play
