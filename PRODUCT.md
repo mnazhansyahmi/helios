@@ -26,7 +26,8 @@ aggregator team, who must match rooftop solar supply with buyer demand hour by h
 Helios is an AI planning tool on top of CREAM in City of Elmina. SDP leases house rooftops,
 installs solar, and sends the power through TNB's grid to SDP's commercial buildings within
 5 km. Helios forecasts hourly rooftop solar and hourly buyer demand for the next working day, shares the
-solar between buyers each hour, and shows the grid top-up gap and estimated CO2 avoided.
+solar between buyers each hour (a planning estimate; CREAM bills monthly by each buyer's
+declared allocation %), and shows the expected grid purchase and estimated CO2 avoided.
 Success in the pitch: judges grasp the supply/demand mismatch (solar peaks at noon, demand
 peaks in the afternoon) and trust the numbers because their limits are stated.
 
@@ -54,8 +55,9 @@ back to a saved forecast and must say so with a visible banner.
 - Accuracy is shown as one plain sentence ("X% better than a simple guess") with MAE in
   small text.
 - Buyer names: "Office A", "Retail building", "Office B".
-- Terminology: grid top-up (electricity still needed from the grid), unused surplus,
-  CO2 avoided (matched solar x 0.740 kg/kWh, Energy Commission 2024 provisional factor).
+- Terminology: expected grid purchase in descriptive text ("Grid top-up" only as a short
+  chart legend), unused surplus, CO2 avoided (estimated: matched solar x 0.740 kg/kWh, Energy
+  Commission 2024 provisional factor; never an ESG claim for buyers).
 
 ## Brand Commitments
 

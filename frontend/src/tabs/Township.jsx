@@ -468,20 +468,25 @@ function layoutLabels(labels, sizes, stage, fixed) {
       }
     }
     spots.sort((a, b) => a.length - b.length);
-    for (const { dx, dy } of spots) {
-      const box = { l: l.ax + dx - w / 2, t: l.ay + dy - h / 2 };
-      box.r = box.l + w;
-      box.b = box.t + h;
-      if (box.l < 8 || box.t < 8 || box.r > stage.w - 8 || box.b > stage.h - 8) continue;
-      if (stage.bars.some((b) => overlaps(box, b)) || fixed.some((f) => overlaps(box, f))
-        || placed.some((p) => overlaps(box, p.box)) || coversPlaza(box, stage.plaza)) continue;
-      const lx = Math.max(box.l, Math.min(l.ax, box.r)); // where the leader leaves the label
-      const ly = Math.max(box.t, Math.min(l.ay, box.b));
-      // the space just above a bar counts as that bar's, so no leader skims across another bar's top
-      const others = [...stage.bars.filter((_, i) => i !== l.bar).map((b) => ({ ...b, t: b.t - 30 })), ...placed.map((p) => p.box)];
-      if (others.some((o) => crosses(o, lx, ly, l.ax, l.ay))) continue;
-      placed.push({ ...l, box, lx, ly });
-      break;
+    // first look for a spot clear of the plaza; on a small screen, if there is none, allow the plaza
+    // rather than hide the label
+    for (const keepPlazaClear of [true, false]) {
+      const spot = spots.find(({ dx, dy }) => {
+        const box = { l: l.ax + dx - w / 2, t: l.ay + dy - h / 2 };
+        box.r = box.l + w;
+        box.b = box.t + h;
+        if (box.l < 8 || box.t < 8 || box.r > stage.w - 8 || box.b > stage.h - 8) return false;
+        if (stage.bars.some((b) => overlaps(box, b)) || fixed.some((f) => overlaps(box, f))
+          || placed.some((p) => overlaps(box, p.box)) || (keepPlazaClear && coversPlaza(box, stage.plaza))) return false;
+        const lx = Math.max(box.l, Math.min(l.ax, box.r)); // where the leader leaves the label
+        const ly = Math.max(box.t, Math.min(l.ay, box.b));
+        // the space just above a bar counts as that bar's, so no leader skims across another bar's top
+        const others = [...stage.bars.filter((_, i) => i !== l.bar).map((b) => ({ ...b, t: b.t - 30 })), ...placed.map((p) => p.box)];
+        if (others.some((o) => crosses(o, lx, ly, l.ax, l.ay))) return false;
+        placed.push({ ...l, box, lx, ly });
+        return true;
+      });
+      if (spot) break;
     }
   }
   return placed;
@@ -685,7 +690,7 @@ export default function Township({ plan, t, hour, onFail }) {
       )}
       <p className="township-key" ref={keyRef}>
         <span><i className="key key-sun" />Roof panels shine with each hour's solar</span>
-        <span><i className="key key-sun" /><i className="key key-hatch" />Bar beside each buyer: amber = share from solar, hatched = from the grid</span>
+        <span><i className="key key-sun" /><i className="key key-hatch" />Bar beside each buyer: amber = share from solar, hatched = expected grid purchase</span>
         {/* on phones the floating labels would overlap, so the shares are listed here instead */}
         <span className="township-shares">
           {labels.map((l) => `${l.name}: needs ${number(l.needs)}, solar ${number(l.solar)}, grid ${number(l.grid)} kWh`).join(" · ")}

@@ -62,7 +62,8 @@ export default function DemandTab({ plan, accuracy }) {
                 the plain average. The model cannot know about closures.</li>
             )}
             {meter && (
-              <li>With live meter readings the error falls to {meter.mae_kwh.toFixed(0)} kWh: this needs SDP's own meter data.</li>
+              <li>Adding recent meter readings cut error {Math.round(100 * (1 - meter.mae_kwh / d.methods.model.mae_kwh))}% in our
+                Florida test ({d.methods.model.mae_kwh.toFixed(0)} to {meter.mae_kwh.toFixed(0)} kWh); the demo does not use meter readings.</li>
             )}
           </ul>
           <p className="side-small">{day}'s buyer demand: {kwh(plan.totals.demand_kwh)} across the three buildings.</p>

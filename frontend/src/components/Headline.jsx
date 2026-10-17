@@ -48,7 +48,7 @@ function Headline({ plan }) {
   if (scenario.rooftops === 0) {
     return (
       <h1 className="ov-day">
-        With no rooftops, all <span className="figure">{energy(totals.demand_kwh)}</span> of {day}'s buyer demand comes from the grid
+        With no rooftops, all <span className="figure">{energy(totals.demand_kwh)}</span> of {day}'s buyer demand is an expected grid purchase
       </h1>
     );
   }
@@ -57,9 +57,9 @@ function Headline({ plan }) {
       With {scenario.rooftops.toLocaleString("en-MY")} rooftops, solar covers{" "}
       <span className="figure figure-sun">{Math.round(coverage)}%</span> of {day}'s buyer demand
       <span className="sep" aria-hidden="true"> · </span>
-      <span className="figure">{energy(totals.grid_topup_kwh)}</span> from the grid
+      <span className="figure">{energy(totals.grid_topup_kwh)}</span> expected grid purchase
       <span className="sep" aria-hidden="true"> · </span>
-      about <span className="figure">{mass(totals.co2_avoided_kg)}</span> CO<sub>2</sub> avoided
+      about <span className="figure">{mass(totals.co2_avoided_kg)}</span> CO<sub>2</sub> avoided (estimated)
     </h1>
   );
 }

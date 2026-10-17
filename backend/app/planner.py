@@ -102,7 +102,11 @@ def accuracy_for_dashboard(accuracy: dict, lead_days: int) -> dict:
     if "demand" in accuracy:
         d = accuracy["demand"]
         model, simple = d["methods"]["model"], d["methods"][d["simple_guess"]]
-        out["demand"] = {"sentence": d["sentence"], "detail": d["detail"],
+        pct = round(100 * (1 - model["mae_kwh"] / simple["mae_kwh"]))
+        baseline = {"last_week": "‘same hour last week’",
+                    "hour_of_week_average": "‘average for that hour of the week’"}.get(d["simple_guess"], "a simple guess")
+        sentence = f"Demand forecast: {pct}% lower MAE than {baseline} on unseen months (Florida stand-in buildings)."
+        out["demand"] = {"sentence": sentence, "detail": d["detail"],
                          "small_print": (f"Average error {model['mae_kwh']:.0f} vs {simple['mae_kwh']:.0f} kWh per "
                                          f"building per hour. Held-out {_months(d['test_period'])}, Florida stand-in "
                                          f"buildings, measured temperatures.")}
@@ -149,10 +153,10 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
     today = local_today()
     lead_days = (data_day - today).days   # how far ahead the forecast is (<= 0 for an old saved forecast)
     if rooftop_count == 0:
-        headline = f"{day_name}: with no rooftops in the scenario, all {_energy(total_demand)} comes from the grid."
+        headline = f"{day_name}: with no rooftops in the scenario, all {_energy(total_demand)} is an expected grid purchase."
     else:
         headline = (f"{day_name}: {rooftop_count:,} rooftops' solar covers {coverage:.0f}% of buyer demand. "
-                    f"{_energy(total_topup)} comes from the grid. About {_mass(co2)} CO₂ avoided.")
+                    f"{_energy(total_topup)} expected grid purchase. About {_mass(co2)} CO₂ avoided (estimated).")
 
     hours = []
     for t in need.index:
@@ -209,7 +213,9 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
                           "source": config.GRID_EMISSION_FACTOR_SOURCE, "tag": "REAL"},
         "match_distance_km": config.MAX_MATCH_DISTANCE_KM,   # the map draws this as its ring
         "rule": (f"Each hour, rooftop solar is shared among buyers within {config.MAX_MATCH_DISTANCE_KM:g} km "
-                 "in proportion to need; any shortfall is grid top-up. An accounting split for planning."),
+                 "in proportion to need; the rest is the expected grid purchase. This hourly split is a planning "
+                 "estimate, not the billing rule: CREAM bills monthly using each buyer's declared allocation % "
+                 "(EC guideline cl. 9.10, 6.11)."),
         "footnote": ("REAL = public measured or forecast data. EXAMPLE = made up for this demo. "
                      "STAND-IN = real data from elsewhere (Florida buildings) standing in for Elmina buildings."),
         # Short forms for the dashboard footnote; full citations are in README.md and config.py.

@@ -44,7 +44,10 @@ export default function AboutTab({ plan }) {
             <ul>
               <li>No public CREAM meter data: solar accuracy is checked against satellite estimates, not rooftop meters.</li>
               <li>Accuracy falls with lead time: a Monday plan made on a Friday is only slightly better than an average day.</li>
-              <li>Matching is an accounting split for planning; electricity flows through TNB's grid.</li>
+              <li>The hourly split is a planning estimate, not the billing rule: CREAM bills monthly using each buyer's
+                declared allocation % (EC guideline cl. 9.10, 6.11). Electricity flows through TNB's grid.</li>
+              <li>CO<sub>2</sub> avoided is estimated with the {plan.carbon_factor.kg_per_kwh.toFixed(3)} kg/kWh grid factor
+                (EC 2024 provisional), for planning only; it is not a figure for any buyer's ESG reporting.</li>
               <li>Open-Meteo's free tier is non-commercial; a real deployment needs a commercial weather licence.</li>
             </ul>
           </div>

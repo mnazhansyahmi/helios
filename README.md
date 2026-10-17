@@ -68,7 +68,7 @@ API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tha
 |---|---|---|
 | Solar forecast | Weather forecast → pvlib → kWh per rooftop per hour | `backend/app/solar.py` |
 | Demand forecast | ML model → kWh per buyer per hour | `backend/app/demand.py` |
-| Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` |
+| Matching | Shares solar between buyers each hour (a planning estimate); expected grid purchase; estimated CO₂ | `backend/app/matching.py` |
 | Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
 | API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
 | Dashboard | React + Vite, four tabs (keys 1–4): Overview (day and hour headlines, Play, hour and rooftop sliders, noon-match preset, 3D example township, 24-hour chart, buyer cards), Solar, Demand, About the data | `frontend/src/` |
@@ -106,7 +106,8 @@ be retrained continuously; that is a next step, not part of this prototype.
 plan made on a Friday is only slightly better than the average day for the month. The
 dashboard shows the score for the lead time actually in use (`04_eval_solar_lead_time.py`).
 
-**Demand, hourly per building: 23% better than a simple guess.** Average error 19.6 kWh
+**Demand, hourly per building: 23% lower MAE than "same hour last week" on unseen months
+(Florida stand-in buildings).** Average error 19.6 kWh
 per building per hour (8% of average use), vs 25.3 for "same hour last week" and 27.9 for
 "average for that hour of the week". Tested on Jul–Dec 2017, which the model never saw. It
 beats both simple guesses for all three buildings, but only narrowly for the Retail building
@@ -118,9 +119,8 @@ Limits, stated plainly:
 - The test uses *measured* temperatures; a real day-ahead temperature forecast adds some error.
 - During the Hurricane Irma week (8–17 Sep 2017) the model was worse than the plain
   hour-of-week average (40 vs 32 kWh). It cannot know about closures.
-- Adding yesterday's and last week's meter readings cuts the error from 19.6 to 14.0 kWh.
-  That needs live meter data from SDP's buildings, so it is **not** in the demo; it shows
-  what CREAM data would add.
+- Adding recent meter readings (yesterday's and last week's) cut error 29% in our Florida
+  test (19.6 to 14.0 kWh). The demo does not use meter readings.
 
 ## Data sources
 
@@ -143,5 +143,9 @@ A production deployment for SDP would need a commercial weather-data licence.
 - **STAND-IN**: buyer demand comes from real buildings in Orlando, Florida (hot, humid
   summers), because no public hourly data exists for Malaysian buildings. They do not
   show Malaysian patterns such as Hari Raya.
+- The hourly split between buyers is a **planning estimate**, not the billing rule: CREAM
+  bills monthly using each buyer's declared allocation % (EC guideline cl. 9.10, 6.11).
+- CO₂ avoided is **estimated** with the 0.740 kg/kWh grid factor (EC 2024 provisional), for
+  planning only; it is not a figure for any buyer's ESG reporting.
 - Solar accuracy is measured against **satellite estimates** of sunlight, not against
   real rooftop meters (no public CREAM meter data exists).

@@ -197,6 +197,11 @@
   .about-col ul { font-size: 14px; gap: .3rem; }
 }
 
+/* Narrower screens: the note beside the buyer cards gets a wider column, so it wraps into fewer lines */
+@media (min-width: 901px) and (max-width: 1400px) {
+  .buyer-cards { grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr); }
+}
+
 /* Phones and narrow windows: the Overview stacks */
 @media (max-width: 900px) {
   .ov-controls { grid-template-columns: minmax(0, 1fr); }

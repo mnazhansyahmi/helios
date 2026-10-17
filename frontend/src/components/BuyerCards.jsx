@@ -30,9 +30,11 @@ function BuyerCards({ plan }) {
         ))}
       </section>
       <p className="tags-note">
-        Planning prototype for CREAM, City of Elmina. Helios plans; TNB runs the grid.{" "}
-        <b>REAL</b> public data · <b>EXAMPLE</b> made up for this demo · <b>STAND-IN</b> real Florida buildings
-        standing in for Elmina's. Accuracy and sources: tabs 2–4.
+        Planning prototype for CREAM, City of Elmina. Helios plans; TNB runs the grid. The hourly split is a
+        planning estimate; CREAM bills monthly using each buyer's declared allocation % (EC guideline cl. 9.10,
+        6.11). CO<sub>2</sub> avoided is estimated: {plan.carbon_factor.kg_per_kwh.toFixed(3)} kg/kWh grid factor
+        (EC 2024 provisional). <b>REAL</b> public data · <b>EXAMPLE</b> made up for this demo · <b>STAND-IN</b> real
+        Florida buildings standing in for Elmina's.
       </p>
     </footer>
   );
