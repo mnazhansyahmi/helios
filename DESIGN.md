@@ -192,9 +192,12 @@ as the slider moves. Data changes tween over 450ms with an exponential ease-out,
 land on the true numbers. A hidden table repeats the data for screen readers.
 
 ### Site plan
-OpenStreetMap tiles in greyscale; amber circles sized by that hour's solar per rooftop group;
-ink-framed squares for buyers, filling amber with the share met by solar; labels to the side
-away from the centre.
+OpenStreetMap tiles in faint greyscale; the map always frames the whole 5 km matching ring
+(1.5px ink, labelled, centred on the buyers). Amber circles sized in metres by that hour's
+solar per rooftop group; ink-framed squares for buyers, filling amber with the share met by
+solar. Buyer labels sit on a paper backing with a hairline border (basemap names never show
+through) and are placed by measured collision checks: close spots first, then a leader line,
+never touching a rooftop dot, another buyer or another label.
 
 ## Do's and Don'ts
 

@@ -100,7 +100,9 @@ export default function App() {
           <p className="map-key">
             <span><i className="key key-roof" />Rooftops, size = solar {hourRange(mapHour)}</span>
             <span><i className="key key-buyer" />Buyer, amber = share met by solar</span>
-            <span className="map-key-range">All within 5 km</span>
+            <span className="map-key-range">
+              <i className="key key-ring" />{plan.match_distance_km} km ring; every rooftop–buyer pair is within {plan.match_distance_km} km
+            </span>
           </p>
         </section>
       </main>

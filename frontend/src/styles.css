@@ -217,17 +217,26 @@ input[type="range"]:focus-visible { outline: 3px solid var(--paper); outline-off
 
 /* map: OpenStreetMap tiles, greyed and lightened so the amber and ink markers lead */
 .site-map { flex: 1; min-height: clamp(200px, 22vh, 520px); background: #e9ecee; font: inherit; }
-.site-map .leaflet-tile-pane { filter: grayscale(1) contrast(.82) brightness(1.08); }
+/* Basemap kept faint so its own place names recede behind Helios's labels and markers */
+.site-map .leaflet-tile-pane { filter: grayscale(1) contrast(.62) brightness(1.17); }
 .leaflet-container .leaflet-control-attribution { font-size: 11px; }
 .buyer-marker { overflow: visible; }
-.buyer-marker-left .buyer-name { left: auto; right: 30px; }
 .buyer-pin { position: absolute; inset: 0; background: var(--paper); box-shadow: inset 0 0 0 3px var(--ink); }
 .buyer-fill { position: absolute; left: 3px; right: 3px; bottom: 3px; max-height: calc(100% - 6px); background: var(--sun); }
+/* Buyer labels sit on a paper backing so basemap place names (e.g. "Elmina") never show through.
+   Their position is computed in SiteMap.jsx to avoid rooftop dots and other labels. */
 .buyer-name {
-  position: absolute; left: 30px; top: 50%; transform: translateY(-50%); white-space: nowrap;
+  position: absolute; white-space: nowrap; line-height: 1.3; padding: 1px 6px;
+  background: rgba(255, 255, 255, .96); border: 1px solid var(--rule);
   font-size: clamp(12px, .9vw, 17px); font-weight: 700; color: var(--ink);
-  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff;
 }
+.buyer-leader { position: absolute; background: var(--ink); }
+.ring-label {
+  position: absolute; transform: translate(-50%, 6px); white-space: nowrap;
+  padding: 0 5px; background: rgba(255, 255, 255, .9);
+  font-size: clamp(11px, .75vw, 14px); font-weight: 600; color: var(--ink-2);
+}
+.key-ring { width: .9em; height: .9em; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink); }
 .buyer-name b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .map-key {
   display: flex; flex-wrap: wrap; gap: .25rem 1.2rem; margin-top: .5rem;

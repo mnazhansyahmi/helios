@@ -205,6 +205,7 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
         "accuracy": accuracy_for_dashboard(reports.load_accuracy(), lead_days),
         "carbon_factor": {"kg_per_kwh": config.GRID_EMISSION_FACTOR_KG_PER_KWH,
                           "source": config.GRID_EMISSION_FACTOR_SOURCE, "tag": "REAL"},
+        "match_distance_km": config.MAX_MATCH_DISTANCE_KM,   # the map draws this as its ring
         "rule": (f"Each hour, rooftop solar is shared among buyers within {config.MAX_MATCH_DISTANCE_KM:g} km "
                  "in proportion to need; any shortfall is grid top-up. An accounting split for planning."),
         "footnote": ("REAL = public measured or forecast data. EXAMPLE = made up for this demo. "

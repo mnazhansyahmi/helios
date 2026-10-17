@@ -30,14 +30,16 @@ ROOFTOPS = [
 # used as a STAND-IN because no public hourly data exists for Malaysian buildings.
 # Why these three (checked 2026-10-14): no separate chilled-water meter and usage rises
 # with outdoor temperature, so their electricity very likely includes air-conditioning.
+# Example buyer points are spread ~1.7-2 km apart so their map markers stay readable
+# when the map is zoomed out to show the whole 5 km ring.
 BUYERS = [
-    {"id": "B1", "name": "Office A", "lat": 3.1830, "lon": 101.5130,
+    {"id": "B1", "name": "Office A", "lat": 3.1900, "lon": 101.5140,
      "bdg2_id": "Panther_office_Jesus", "floor_area_m2": 9596,
      "note": "Busy weekdays, quiet weekends"},
-    {"id": "B2", "name": "Retail building", "lat": 3.1880, "lon": 101.5080,
+    {"id": "B2", "name": "Retail building", "lat": 3.1790, "lon": 101.5040,
      "bdg2_id": "Panther_retail_Felix", "floor_area_m2": 2942,
      "note": "Open 7 days, daytime peak"},
-    {"id": "B3", "name": "Office B", "lat": 3.1780, "lon": 101.5180,
+    {"id": "B3", "name": "Office B", "lat": 3.1760, "lon": 101.5200,
      "bdg2_id": "Panther_office_Patti", "floor_area_m2": 14503,
      "note": "Larger office, busy into the evening"},
 ]
