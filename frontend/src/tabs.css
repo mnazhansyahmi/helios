@@ -89,26 +89,49 @@
 .ov-day { font-size: clamp(15px, 1.4vw, 29px); font-weight: 500; line-height: 1.25; color: var(--band-text-2); }
 .ov-line { font-stretch: 75%; font-weight: 800; font-size: clamp(30px, 3.5vw, 74px); line-height: 1.02; letter-spacing: -0.012em; }
 .ov-line .figure-sun { color: var(--sun); }
+/* Two groups of controls: "The day" (Play + timeline, the most width) and the bordered "Scenario" box */
 .ov-controls {
-  display: grid; grid-template-columns: auto minmax(0, 1.3fr) minmax(0, 1fr) auto;
-  align-items: center; gap: .6rem clamp(16px, 1.8vw, 36px); margin-top: clamp(2px, .3vw, 6px);
+  display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  align-items: end; gap: .8rem clamp(24px, 3vw, 64px); margin-top: clamp(2px, .3vw, 6px);
 }
+.ov-group { min-width: 0; margin: 0; padding: 0; border: 0; display: grid; align-items: center; }
+.ov-group legend {
+  padding: 0; margin-bottom: .3rem; font-size: clamp(10px, .62vw, 12px); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--band-text-2);
+}
+.ov-day-group { grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(16px, 1.8vw, 36px); }
+.ov-scenario-box {
+  grid-template-columns: minmax(0, 1fr) auto; column-gap: clamp(12px, 1.2vw, 24px);
+  border: 1px solid var(--band-track); padding: 0 clamp(10px, 1vw, 20px) clamp(6px, .5vw, 10px);
+}
+.ov-scenario-box legend { margin: 0 0 0 -.4em; padding: 0 .4em; }
 .play {
   border: 2px solid var(--paper); background: transparent; color: var(--paper); cursor: pointer;
   padding: .3em .9em; font-stretch: 75%; font-weight: 800; font-size: clamp(18px, 1.5vw, 30px);
 }
 .play:hover { background: rgba(255, 255, 255, .1); }
 .play[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
-.hour-slider { position: relative; padding-bottom: 1.3em; font-size: clamp(11px, .78vw, 15px); }
-.hour-slider input[type="range"]::-webkit-slider-runnable-track {
-  background: linear-gradient(to right, var(--paper) var(--fill), var(--band-track) var(--fill));
+
+/* the hour slider as a timeline: a thin line, a tick every hour, a white needle (no fill: time, not an amount) */
+.timeline { --tl-h: 34px; position: relative; padding-bottom: 1.35em; font-size: clamp(11px, .78vw, 15px); }
+.timeline input[type="range"] { position: relative; height: var(--tl-h); }
+.timeline input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: var(--band-text-2); }
+.timeline input[type="range"]::-webkit-slider-thumb {
+  width: 6px; height: calc(var(--tl-h) - 6px); margin-top: calc(1px - (var(--tl-h) - 6px) / 2);
+  background: var(--paper); border: 0; box-shadow: 0 0 0 2px var(--ink);
 }
-.hour-slider input[type="range"]::-webkit-slider-thumb { border-color: var(--paper); background: var(--ink); }
-.hour-slider input[type="range"]::-moz-range-progress { background: var(--paper); }
-.hour-ticks { position: absolute; left: 0; right: 0; top: 30px; color: var(--band-text-2); }
-.hour-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.timeline input[type="range"]::-moz-range-track { height: 2px; background: var(--band-text-2); }
+.timeline input[type="range"]::-moz-range-progress { background: transparent; }
+.timeline input[type="range"]::-moz-range-thumb { width: 6px; height: calc(var(--tl-h) - 6px); border: 0; border-radius: 0; background: var(--paper); }
+.timeline input[type="range"]:focus-visible { outline-offset: 2px; }
+.timeline-ticks { position: absolute; left: 3px; right: 3px; top: 0; height: var(--tl-h); pointer-events: none; color: var(--band-text-2); }
+.timeline-ticks span { position: absolute; top: calc(var(--tl-h) / 2 + 3px); width: 1px; height: 5px; background: var(--band-text-2); }
+.timeline-ticks span.major { height: 9px; background: var(--paper); }
+.timeline-ticks em { position: absolute; top: 11px; left: 0; transform: translateX(-50%); font-style: normal; white-space: nowrap; }
+
+/* the scenario: amber rooftop slider (an amount) under its label, the noon-match preset beside them */
 .ov-rooftops { display: grid; font-size: clamp(11px, .78vw, 15px); color: var(--band-text-2); }
-.ov-rooftops-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .1rem .6rem; cursor: pointer; }
+.ov-rooftops-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .1rem .5rem; cursor: pointer; }
 .ov-rooftops-value { font-stretch: 75%; font-weight: 800; font-size: clamp(20px, 1.6vw, 32px); line-height: 1; color: var(--paper); font-variant-numeric: tabular-nums; }
 .ov-rooftops-note { display: inline-flex; align-items: center; gap: .4rem; }
 .ov-rooftops .slider-wrap { padding-bottom: 1.2em; }
@@ -131,11 +154,13 @@
 .ov-chart .legend { font-size: clamp(12px, .85vw, 16px); gap: .2rem 1rem; }
 .ov-chart-area { position: relative; flex: 1; display: flex; min-height: 0; }
 .ov-chart-area .chart-box { min-height: 0; }
-/* the hour marker: a 2px ink line over the chart, with the hour in an ink tag at its foot */
+/* the hour marker: a 2px ink line over the chart (broken wherever chart text sits, so no text is ever
+   crossed), with the hour in an ink tag at its foot */
 .hour-marker-layer { position: absolute; inset: 0; pointer-events: none; }
-.hour-marker { position: absolute; left: 0; width: 2px; margin-left: -1px; background: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, .9); will-change: transform; }
+.hour-marker { position: absolute; left: 0; top: 0; width: 0; will-change: transform; }
+.hour-marker i { position: absolute; left: -1px; width: 2px; background: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, .9); }
 .hour-marker span {
-  position: absolute; bottom: 6px; left: 6px; padding: 1px 7px; white-space: nowrap;
+  position: absolute; left: 6px; transform: translateY(calc(-100% - 6px)); padding: 1px 7px; white-space: nowrap;
   background: var(--ink); color: var(--paper); font-size: clamp(11px, .78vw, 15px); font-weight: 700;
 }
 
@@ -188,6 +213,7 @@
   .band-overview { padding-top: 4px; padding-bottom: 10px; gap: 2px; }
   .ov-day { font-size: clamp(13px, 1.15vw, 20px); }   /* crowded? the day line shrinks first, never the hour line */
   .ov-chart { padding-top: 6px; }
+  .timeline { --tl-h: 28px; }
   .page-head { padding-top: 10px; padding-bottom: 8px; }
   .page-head p { font-size: 13px; }
   .card { padding-top: 8px; }
@@ -197,9 +223,15 @@
   .about-col ul { font-size: 14px; gap: .3rem; }
 }
 
-/* Narrower screens: the note beside the buyer cards gets a wider column, so it wraps into fewer lines */
+/* Narrower screens: the note beside the buyer cards gets a wider column, so it wraps into fewer lines,
+   and the scenario label puts "not a CREAM figure" on its own line under the rooftop count */
 @media (min-width: 901px) and (max-width: 1400px) {
   .buyer-cards { grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr); }
+  .ov-rooftops-note { flex-basis: 100%; }
+  .ov-rooftops-sep { display: none; }
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  .ov-controls { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
 }
 
 /* Phones and narrow windows: the Overview stacks */

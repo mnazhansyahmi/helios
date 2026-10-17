@@ -40,46 +40,121 @@ class ThreeDGuard extends Component {
 function HourMarker({ t, hour }) {
   const ref = useRef(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const [texts, setTexts] = useState([]); // boxes of the chart's own text, which the line must never cross
   useEffect(() => {
     const observer = new ResizeObserver(([entry]) => setSize({ width: entry.contentRect.width, height: entry.contentRect.height }));
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
+
+  // Measure the chart's text (callouts, SOLAR / GRID TOP-UP, axis titles) each time the chart redraws.
+  // The chart never changes during Play, so this runs only after a plan change or a resize.
+  useEffect(() => {
+    const layer = ref.current;
+    const chart = layer.parentElement.querySelector(".chart-canvas");
+    if (!chart) return undefined;
+    let timer;
+    const measure = () => {
+      const origin = layer.getBoundingClientRect();
+      setTexts([...chart.querySelectorAll("svg text")]
+        .map((el) => el.getBoundingClientRect())
+        .filter((r) => r.width > 0)
+        .map((r) => ({ l: r.left - origin.left - 6, r: r.right - origin.left + 6, t: r.top - origin.top - 3, b: r.bottom - origin.top + 3 })));
+    };
+    const later = () => { clearTimeout(timer); timer = setTimeout(measure, 120); };
+    const observer = new MutationObserver(later);
+    observer.observe(chart, { childList: true, subtree: true, attributes: true, characterData: true });
+    later();
+    return () => { observer.disconnect(); clearTimeout(timer); };
+  }, []);
+
   const plot = plotArea(size.width, size.height);
   const x = plot.left + (t / 23) * (plot.right - plot.left);
+  const top = plot.top - 6;
+  // the line from top to the x-axis, with a gap wherever it would cross chart text
+  const gaps = texts.filter((b) => b.l <= x && b.r >= x).map((b) => [b.t, b.b]).sort((a, b) => a[0] - b[0]);
+  const segments = [];
+  let y = top;
+  for (const [from, to] of gaps) {
+    if (from > y) segments.push([y, Math.min(from, plot.bottom)]);
+    y = Math.max(y, to);
+  }
+  if (plot.bottom > y) segments.push([y, plot.bottom]);
+
   return (
     <div className="hour-marker-layer" ref={ref} aria-hidden="true">
       {size.width > 0 && (
         // moved with a transform on its own layer: the chart underneath is never repainted during Play
-        <div className="hour-marker" style={{ transform: `translateX(${x}px)`, top: plot.top - 6, height: plot.bottom - plot.top + 6 }}>
-          <span>{hourName(hour)}</span>
+        <div className="hour-marker" style={{ transform: `translateX(${x}px)` }}>
+          {segments.map(([from, to]) => <i key={from} style={{ top: from, height: to - from }} />)}
+          <span style={{ top: plot.bottom }}>{hourName(hour)}</span>
         </div>
       )}
     </div>
   );
 }
 
-/** The scenario slider, compact: how many rooftops like the examples join (0-1000). */
-function RooftopSlider({ scenario, rooftops, onChange }) {
+/**
+ * "The day": Play, and the hour slider drawn as a timeline (a thin line, a tick every hour, a
+ * white needle), so it never looks like the rooftop slider. It moves time; it is not a quantity.
+ */
+function DayTimeline({ t, hour, playing, onPlay, onScrub }) {
+  const at = (h) => `${((h - FIRST_HOUR) / (LAST_HOUR - FIRST_HOUR)) * 100}%`;
+  return (
+    <fieldset className="ov-group ov-day-group">
+      <legend>The day</legend>
+      <button type="button" className="play" onClick={onPlay} aria-pressed={playing}>
+        {playing ? "Pause" : "Play the day"}
+      </button>
+      <div className="timeline">
+        <div className="timeline-ticks" aria-hidden="true">
+          {Array.from({ length: LAST_HOUR - FIRST_HOUR + 1 }, (_, i) => FIRST_HOUR + i).map((h) => (
+            <span key={h} className={h % 3 === 0 ? "major" : undefined} style={{ left: at(h) }}>
+              {h % 3 === 0 && <em>{hourName(h)}</em>}
+            </span>
+          ))}
+        </div>
+        <input type="range" min={FIRST_HOUR} max={LAST_HOUR} step="any" value={t}
+               aria-label="Hour of the day" aria-valuetext={hourName(hour)}
+               onChange={(e) => onScrub(Math.round(Number(e.target.value)))} />
+      </div>
+    </fieldset>
+  );
+}
+
+/** "Scenario": how many rooftops like the examples join (0-1000), and the noon-match preset. */
+function ScenarioBox({ scenario, rooftops, onChange }) {
   const { min, max, preset_noon_match: preset } = scenario;
   const fill = ((rooftops - min) / (max - min)) * 100;
   const presetPct = preset == null ? null : ((preset - min) / (max - min)) * 100;
+  const atPreset = preset != null && rooftops === preset;
   return (
-    <div className="ov-rooftops">
-      <label htmlFor="fleet" className="ov-rooftops-head">
-        <span className="ov-rooftops-value">{rooftops.toLocaleString("en-MY")}</span> rooftops
-        <span className="ov-rooftops-note">scenario, not a CREAM figure <Tag kind="EXAMPLE" /></span>
-      </label>
-      <div className="slider-wrap">
-        <input id="fleet" type="range" min={min} max={max} step={1} value={rooftops}
-               onChange={(e) => onChange(Number(e.target.value))} style={{ "--fill": `${fill}%` }} />
-        {presetPct != null && (
-          <span className="preset-tick" style={{ left: `${presetPct}%` }} aria-hidden="true">noon match</span>
-        )}
+    <fieldset className="ov-group ov-scenario-box">
+      <legend>Scenario</legend>
+      <div className="ov-rooftops">
+        <label htmlFor="fleet" className="ov-rooftops-head">
+          <span className="ov-rooftops-value">{rooftops.toLocaleString("en-MY")}</span> rooftops
+          <span className="ov-rooftops-note"><span className="ov-rooftops-sep">· </span>not a CREAM figure <Tag kind="EXAMPLE" /></span>
+        </label>
+        <div className="slider-wrap">
+          <input id="fleet" type="range" min={min} max={max} step={1} value={rooftops}
+                 onChange={(e) => onChange(Number(e.target.value))} style={{ "--fill": `${fill}%` }} />
+          {presetPct != null && (
+            <span className="preset-tick" style={{ left: `${presetPct}%` }} aria-hidden="true">noon match</span>
+          )}
+        </div>
       </div>
-    </div>
+      <button type="button" className="preset preset-compact" onClick={() => onChange(preset)}
+              disabled={preset == null} aria-pressed={atPreset}>
+        <span className="preset-action">{atPreset ? "At the noon match" : "Jump to noon match"}</span>
+        <span className="preset-detail">{preset == null ? "No noon sun forecast" : `${preset.toLocaleString("en-MY")} rooftops`}</span>
+      </button>
+    </fieldset>
   );
 }
+
+/** "noon" -> "Noon", "3pm" stays "3pm": the hour line starts with a capital. */
+const capitalised = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 
 /**
  * Tab 1, "Overview": the whole story on one screen.
@@ -96,9 +171,6 @@ export default function OverviewTab({ plan, rooftops, onRooftops, error }) {
   const hour = Math.min(LAST_HOUR, Math.floor(t));          // the hourly bucket being shown
   const row = plan.hours[hour];
   const pct = row.demand_kwh > 0 ? Math.round((100 * row.solar_used_kwh) / row.demand_kwh) : 0;
-  const preset = plan.scenario.preset_noon_match;
-  const atPreset = preset != null && rooftops === preset;
-  const fill = ((t - FIRST_HOUR) / (LAST_HOUR - FIRST_HOUR)) * 100;
 
   const play = () => {
     if (!playing && t >= LAST_HOUR) scrub(FIRST_HOUR);       // replay from the start
@@ -110,30 +182,12 @@ export default function OverviewTab({ plan, rooftops, onRooftops, error }) {
       <header className="band band-overview">
         <Headline plan={plan} />
         <p className="ov-line" aria-live="polite">
-          {hourName(hour)}: solar covers <span className="figure-sun">{pct}%</span>, grid supplies{" "}
+          {capitalised(hourName(hour))}: solar covers <span className="figure-sun">{pct}%</span>, grid purchase{" "}
           <span className="figure">{kwh(row.grid_topup_kwh)}</span>
         </p>
         <div className="ov-controls">
-          <button type="button" className="play" onClick={play} aria-pressed={playing}>
-            {playing ? "Pause" : "Play the day"}
-          </button>
-          <div className="hour-slider">
-            <input type="range" min={FIRST_HOUR} max={LAST_HOUR} step="any" value={t}
-                   aria-label="Hour of the day" aria-valuetext={hourName(hour)}
-                   onChange={(e) => scrub(Math.round(Number(e.target.value)))}
-                   style={{ "--fill": `${fill}%` }} />
-            <div className="hour-ticks" aria-hidden="true">
-              {[6, 9, 12, 15, 18, 21].map((h) => (
-                <span key={h} style={{ left: `${((h - FIRST_HOUR) / (LAST_HOUR - FIRST_HOUR)) * 100}%` }}>{hourName(h)}</span>
-              ))}
-            </div>
-          </div>
-          <RooftopSlider scenario={plan.scenario} rooftops={rooftops} onChange={onRooftops} />
-          <button type="button" className="preset preset-compact" onClick={() => onRooftops(preset)}
-                  disabled={preset == null} aria-pressed={atPreset}>
-            <span className="preset-action">{atPreset ? "At the noon match" : "Jump to noon match"}</span>
-            <span className="preset-detail">{preset == null ? "No noon sun forecast" : `${preset.toLocaleString("en-MY")} rooftops`}</span>
-          </button>
+          <DayTimeline t={t} hour={hour} playing={playing} onPlay={play} onScrub={scrub} />
+          <ScenarioBox scenario={plan.scenario} rooftops={rooftops} onChange={onRooftops} />
         </div>
         {error && <p className="band-error" role="alert">Lost contact with the server; showing the last plan.</p>}
       </header>

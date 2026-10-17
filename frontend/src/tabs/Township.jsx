@@ -396,8 +396,10 @@ function frame(camera, width, height, buyers) {
   camera.lookAt(LOOK_AT);
   camera.updateMatrixWorld();
   const points = [...circle(EDGE_R, 0, 48), ...circle(EDGE_R, -0.5, 48)];
-  // headroom above the bars, so each label can sit right above its bar
-  buyers.forEach((b) => points.push(new THREE.Vector3(b.bx, BAR.h + 3.6, b.bz), new THREE.Vector3(b.x, b.top, b.z)));
+  // headroom above the bars, so each label can sit right above its bar (more on short stages, where
+  // a label is tall compared with the town)
+  const room = height < 520 ? 6 : 3.6;
+  buyers.forEach((b) => points.push(new THREE.Vector3(b.bx, BAR.h + room, b.bz), new THREE.Vector3(b.x, b.top, b.z)));
   const box = new THREE.Box3();
   points.forEach((p) => box.expandByPoint(p.applyMatrix4(camera.matrixWorldInverse)));
   const aspect = width / height;
