@@ -39,6 +39,17 @@ def test_plan_says_which_day_and_how_far_ahead(offline_client):
     assert plan["accuracy"]["solar"]["small_print"]
 
 
+def test_each_rooftop_has_24_hours_for_one_roof(offline_client):
+    plan = offline_client.get("/api/plan?rooftops=80").json()   # 80 rooftops -> 10 roofs per type
+    for r in plan["rooftops"]:
+        one_roof = r["hourly_kwh_one_roof"]
+        assert len(one_roof) == 24 and min(one_roof) >= 0
+        assert sum(one_roof) == pytest.approx(r["kwh_one_roof"], abs=0.05)
+        # the fleet total for this type at noon = one roof x roofs it stands for
+        noon = plan["hours"][12]["rooftops_kwh"][r["id"]]
+        assert noon == pytest.approx(one_roof[12] * r["roofs_represented"], abs=0.1)
+
+
 def test_default_scenario_is_50_rooftops(offline_client):
     plan = offline_client.get("/api/plan").json()
     assert plan["scenario"]["rooftops"] == config.FLEET_DEFAULT == 50

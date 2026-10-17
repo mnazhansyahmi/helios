@@ -1,18 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchPlan } from "./api.js";
-import { fullDate, hourName, hourRange, leadText, weekdayName } from "./format.js";
-import Controls from "./components/Controls.jsx";
-import DayChart from "./components/DayChart.jsx";
-import Headline from "./components/Headline.jsx";
-import Particulars from "./components/Particulars.jsx";
-import SiteMap from "./components/SiteMap.jsx";
-import Tag from "./components/Tag.jsx";
+import { fetchAccuracy, fetchPlan } from "./api.js";
+import TopBar, { TABS } from "./components/TopBar.jsx";
+import AboutTab from "./tabs/AboutTab.jsx";
+import DemandTab from "./tabs/DemandTab.jsx";
+import MatchTab from "./tabs/MatchTab.jsx";
+import OverviewTab from "./tabs/OverviewTab.jsx";
+import SolarTab from "./tabs/SolarTab.jsx";
+
+const tabFromHash = () => {
+  const id = window.location.hash.replace("#", "");
+  return TABS.some((t) => t.id === id) ? id : null;
+};
 
 export default function App() {
   const [plan, setPlan] = useState(null);
-  const [rooftops, setRooftops] = useState(null); // null = use the server's default (50)
+  const [accuracy, setAccuracy] = useState(null);
+  const [rooftops, setRooftops] = useState(null); // shared by every tab; starts at the noon match
+  const [ready, setReady] = useState(false);       // true once the first noon-match plan has arrived
   const [error, setError] = useState(null);
-  const [hoverHour, setHoverHour] = useState(null);
+  const [tab, setTab] = useState(() => tabFromHash() ?? "overview");
   const inFlight = useRef(null);
 
   // Fetch the plan; a newer request cancels an older one, so dragging the slider stays snappy.
@@ -26,8 +32,34 @@ export default function App() {
   }, []);
 
   useEffect(() => { load(rooftops); }, [rooftops, load]);
+  useEffect(() => { fetchAccuracy().then(setAccuracy).catch(() => {}); }, []);
 
-  if (!plan) {
+  // The pitch opens at the noon match: once the first plan tells us that number, switch to it.
+  useEffect(() => {
+    if (plan && rooftops === null) setRooftops(plan.scenario.preset_noon_match ?? plan.scenario.rooftops);
+    if (plan && !ready && rooftops !== null && plan.scenario.rooftops === rooftops) setReady(true);
+  }, [plan, rooftops, ready]);
+
+  // Tabs: click, keys 1-5 (for the live pitch), and the address bar (#solar) so a refresh keeps the tab.
+  const changeTab = useCallback((id) => {
+    setTab(id);
+    window.history.replaceState(null, "", `#${id}`);
+  }, []);
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const el = e.target;
+      if (el.isContentEditable || el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "range")) return;
+      const index = Number(e.key) - 1;
+      if (Number.isInteger(index) && index >= 0 && index < TABS.length) changeTab(TABS[index].id);
+    };
+    const onHash = () => { const id = tabFromHash(); if (id) setTab(id); };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("hashchange", onHash);
+    return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("hashchange", onHash); };
+  }, [changeTab]);
+
+  if (!plan || !ready) {
     return (
       <div className="app app-waiting">
         <header className="band">
@@ -47,67 +79,14 @@ export default function App() {
   }
 
   const shownRooftops = rooftops ?? plan.scenario.rooftops;
-  const mapHour = hoverHour ?? plan.peaks.solar_hour ?? 12;
-  const offline = plan.weather.source !== "live";
-
   return (
     <div className="app">
-      <header className="band">
-        <div className="band-meta">
-          <p className="wordmark">Helios</p>
-          <p className="band-context">Planning prototype for CREAM, City of Elmina. Helios plans; TNB runs the grid.</p>
-          {/* The planned day, stated plainly: the default is the next working day in Selangor */}
-          <p className="band-date">
-            <span className="band-date-label">Plan for</span>{" "}
-            <strong className="band-date-day">{fullDate(plan.day)}</strong>{" "}
-            <span>
-              {plan.is_next_working_day && <span className="band-date-why">next working day · </span>}
-              {plan.lead_days >= 1 ? leadText(plan.lead_days) : "saved forecast"}
-            </span>{" "}
-            <Tag kind="REAL" />
-          </p>
-          {offline && (
-            <p className="stamp" role="status">
-              Saved forecast · {plan.weather.fetched_at.replace("T", " ")}
-            </p>
-          )}
-        </div>
-        <Headline plan={plan} />
-        <Controls scenario={plan.scenario} rooftops={shownRooftops} onChange={setRooftops} />
-        {error && <p className="band-error" role="alert">Lost contact with the server; showing the last plan.</p>}
-      </header>
-
-      <main className="panels">
-        <section className="panel panel-chart" aria-labelledby="chart-title">
-          <div className="panel-head">
-            <h2 id="chart-title">{weekdayName(plan.day)}, hour by hour</h2>
-            <ul className="legend" aria-label="Chart key">
-              <li><i className="key key-line" />Buyer demand <Tag kind="STAND-IN" /></li>
-              <li><i className="key key-sun" />Solar used</li>
-              <li><i className="key key-hatch" />Grid top-up</li>
-              {plan.totals.surplus_kwh > 0 && <li><i className="key key-pale" />Unused solar</li>}
-            </ul>
-          </div>
-          <DayChart plan={plan} onHourHover={setHoverHour} />
-        </section>
-
-        <section className="panel panel-map" aria-labelledby="map-title">
-          <div className="panel-head">
-            <h2 id="map-title">Site plan at {hourName(mapHour)}</h2>
-            <Tag kind="EXAMPLE" />
-          </div>
-          <SiteMap plan={plan} hour={mapHour} />
-          <p className="map-key">
-            <span><i className="key key-roof" />Rooftops, size = solar {hourRange(mapHour)}</span>
-            <span><i className="key key-buyer" />Buyer, amber = share met by solar</span>
-            <span className="map-key-range">
-              <i className="key key-ring" />{plan.match_distance_km} km ring; every rooftop–buyer pair is within {plan.match_distance_km} km
-            </span>
-          </p>
-        </section>
-      </main>
-
-      <Particulars plan={plan} />
+      <TopBar tab={tab} onTab={changeTab} plan={plan} />
+      {tab === "overview" && <OverviewTab plan={plan} rooftops={shownRooftops} onRooftops={setRooftops} />}
+      {tab === "solar" && <SolarTab plan={plan} accuracy={accuracy} />}
+      {tab === "demand" && <DemandTab plan={plan} accuracy={accuracy} />}
+      {tab === "match" && <MatchTab plan={plan} rooftops={shownRooftops} onRooftops={setRooftops} error={error} />}
+      {tab === "about" && <AboutTab plan={plan} />}
     </div>
   );
 }

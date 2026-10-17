@@ -38,5 +38,11 @@ export function fullDate(isoDay) {
   return `${weekdayName(isoDay)} ${d} ${MONTHS[m - 1]} ${y}`;
 }
 
+/** "2026-10-19" -> "Mon 19 Oct" (for narrow screens) */
+export function shortDate(isoDay) {
+  const [, m, d] = isoDay.split("-").map(Number);
+  return `${weekdayName(isoDay).slice(0, 3)} ${d} ${MONTHS[m - 1].slice(0, 3)}`;
+}
+
 /** How far ahead the forecast was made: 1 -> "forecast 1 day ahead" */
 export const leadText = (days) => `forecast ${days} day${days === 1 ? "" : "s"} ahead`;

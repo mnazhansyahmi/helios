@@ -179,6 +179,8 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
 
     rooftops = [{**r, "tag": "EXAMPLE", "roofs_represented": round(roofs_per_type, 2),
                  "kwh_one_roof": round(float(base["one_roof"][r["id"]].sum()), 1),
+                 # 24 hourly values for ONE roof of this type (Solar tab curves, 3D township glow)
+                 "hourly_kwh_one_roof": [round(float(v), 3) for v in base["one_roof"][r["id"]]],
                  "kwh_all_roofs": round(float(supply[r["id"]].sum()), 1)} for r in sites.ROOFTOPS]
 
     return {
