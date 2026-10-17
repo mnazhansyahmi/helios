@@ -199,6 +199,15 @@ solar. Buyer labels sit on a paper backing with a hairline border (basemap names
 through) and are placed by measured collision checks: close spots first, then a leader line,
 never touching a rooftop dot, another buyer or another label.
 
+### Example township (Overview tab)
+A three.js axonometric (orthographic camera, no perspective lean) of a tidy made-up layout:
+8 blocks of 8 houses, one block per example rooftop type, around 3 buyer buildings on a
+plaza. Flat plan colours for ground and roads; house panels go from dark slate to amber with
+that hour's solar for one roof of the type. Buyer buildings fill amber from the ground up by
+the share met by solar, with the rest in ink hatching (the grid), outlined in 1px ink. Labels
+on paper with an ink hairline; on phones the shares move into the key. Drawn only when the
+hour or size changes; falls back to the 2D site plan without WebGL. Always tagged EXAMPLE.
+
 ## Do's and Don'ts
 
 ### Do:

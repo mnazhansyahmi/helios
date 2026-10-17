@@ -115,6 +115,27 @@
   font-size: clamp(12px, .85vw, 16px); font-weight: 600; color: var(--ink-2);
 }
 
+/* The 3D township: a canvas filling the stage, buyer labels over it, and a one-line key */
+.township { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+.township canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.township-label {
+  position: absolute; transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; pointer-events: none;
+  padding: 3px 9px; background: var(--paper); border: 1px solid var(--ink);
+  font-size: clamp(13px, .95vw, 19px); font-weight: 600; color: var(--ink-text); font-variant-numeric: tabular-nums;
+}
+.township-label b { font-stretch: 75%; font-weight: 800; font-size: 1.2em; }
+.township-key {
+  position: absolute; left: var(--gutter); bottom: 10px; display: flex; flex-wrap: wrap; gap: .3rem 1.6rem;
+  padding: 4px 10px; background: rgba(255, 255, 255, .94); border: 1px solid var(--rule);
+  font-size: clamp(12px, .8vw, 15px); color: var(--ink-2);
+}
+.township-key .key + .key { margin-left: -.25em; }
+.township-shares { display: none; font-weight: 700; color: var(--ink-text); }
+@media (max-width: 900px) {
+  .township-label { display: none; }
+  .township-shares { display: inline; }
+}
+
 /* Short screens (e.g. 1280x720): tighten the new tabs so each still fits without scrolling */
 @media (min-width: 901px) and (max-height: 820px) {
   .topbar { padding-top: 5px; padding-bottom: 0; }

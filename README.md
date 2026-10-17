@@ -52,6 +52,10 @@ with a clear "Offline" banner. Commit the new file in `backend/data/demo_snapsho
 The dashboard plans the **next working day** in Selangor (skipping weekends and Selangor
 public holidays), so on a Friday it shows Monday, using a forecast made 3 days ahead.
 
+The Overview tab draws a 3D **example** township (not a model of Elmina) with the hour slider
+and "Play the day". It needs WebGL; without it, the Overview shows the 2D site plan instead.
+Everything it draws is generated in code, so it works offline.
+
 API (while running): `/api/plan?rooftops=50` returns the whole dashboard for that day
 (add `&day=2026-10-23` for another date);
 `/docs` lists every endpoint.
@@ -65,7 +69,7 @@ API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tha
 | Matching | Shares solar between buyers each hour; grid top-up; CO₂ | `backend/app/matching.py` |
 | Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
 | API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
-| Dashboard | React + Vite: headline, preset, slider, chart, map, particulars | `frontend/src/` |
+| Dashboard | React + Vite, five tabs (keys 1–5): Overview (3D example township, three.js), Solar, Demand, Match (headline, preset, slider, chart, map), About the data | `frontend/src/` |
 | Design system | Visual rules for anyone extending the dashboard | `DESIGN.md`, `PRODUCT.md` |
 
 Working on the dashboard with live reload: start the API with `python run_demo.py --no-browser`,

@@ -1,18 +1,44 @@
+import { Component, Suspense, lazy, useCallback, useState } from "react";
 import SiteMap from "../components/SiteMap.jsx";
 import Tag from "../components/Tag.jsx";
 import { hourName, kwh } from "../format.js";
 import usePlayDay from "./usePlayDay.js";
 
+// The 3D township (and three.js) is a separate file, loaded from this server only when needed.
+const Township = lazy(() => import("./Township.jsx"));
+
 const FIRST_HOUR = 6;
 const LAST_HOUR = 21;
+
+/** True if this browser can draw WebGL (the 3D township needs it). */
+function canUseWebGL() {
+  try {
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+    gl?.getExtension("WEBGL_lose_context")?.loseContext(); // free the test context straight away
+    return Boolean(gl);
+  } catch {
+    return false;
+  }
+}
+
+/** If the 3D township throws while loading or drawing, tell the Overview to show the 2D plan. */
+class ThreeDGuard extends Component {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch() { this.props.onFail(); }
+  render() { return this.state.failed ? null : this.props.children; }
+}
 
 /**
  * Tab 1, "Overview": the day at a glance. One big line for the chosen hour, an hour slider,
  * "Play the day" (6am-9pm in ~10 s, 2 s hold at 3pm) and the noon-match preset.
- * The picture is the 2D site plan; `Scene` (the 3D township) replaces it when given.
+ * The picture is the 3D example township; without WebGL it falls back to the 2D site plan.
  */
-export default function OverviewTab({ plan, rooftops, onRooftops, Scene }) {
+export default function OverviewTab({ plan, rooftops, onRooftops }) {
   const { t, playing, toggle, scrub } = usePlayDay(plan.scenario.preset_hour ?? 12);
+  const [threeD, setThreeD] = useState(canUseWebGL);
+  const fallBack = useCallback(() => setThreeD(false), []);
   const hour = Math.min(LAST_HOUR, Math.floor(t));          // the hourly bucket being shown
   const row = plan.hours[hour];
   const pct = row.demand_kwh > 0 ? Math.round((100 * row.solar_used_kwh) / row.demand_kwh) : 0;
@@ -59,8 +85,12 @@ export default function OverviewTab({ plan, rooftops, onRooftops, Scene }) {
         </div>
       </header>
       <main className="ov-stage">
-        {Scene ? <Scene plan={plan} t={t} hour={hour} /> : <SiteMap plan={plan} hour={hour} />}
-        <p className="ov-label"><Tag kind="EXAMPLE" /> {Scene ? "Example township, not a model of Elmina" : "Example sites"} · all within {plan.match_distance_km} km</p>
+        {threeD ? (
+          <ThreeDGuard onFail={fallBack}>
+            <Suspense fallback={null}><Township plan={plan} t={t} hour={hour} onFail={fallBack} /></Suspense>
+          </ThreeDGuard>
+        ) : <SiteMap plan={plan} hour={hour} />}
+        <p className="ov-label"><Tag kind="EXAMPLE" /> {threeD ? "Example township, not a model of Elmina" : "Example sites"} · all within {plan.match_distance_km} km</p>
       </main>
     </div>
   );
