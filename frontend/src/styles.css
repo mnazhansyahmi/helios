@@ -21,9 +21,11 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-/* Reserve the scrollbar's width permanently: otherwise a scrollbar appearing narrows the
-   page, text re-wraps taller, and the page can get stuck one line too tall on a projector. */
-html { scrollbar-color: #8a9299 var(--zinc-50); scrollbar-gutter: stable; }
+/* Desktop screens are designed to fit with no scroll, so no space is kept for a scrollbar
+   (a reserved gutter shows as a blank strip down the right edge). Narrow screens do scroll,
+   so they reserve it: a scrollbar appearing then never narrows the page and re-wraps text. */
+html { scrollbar-color: #8a9299 var(--zinc-50); }
+@media (max-width: 900px) { html { scrollbar-gutter: stable; } }
 body {
   margin: 0;
   background: var(--paper);
