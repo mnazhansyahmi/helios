@@ -27,7 +27,7 @@ export default function AboutTab({ plan }) {
               <li>Rooftop locations, sizes and directions</li>
               <li>Buyer building locations (all within {km} km)</li>
               <li>How many rooftops join: the scenario slider, not a CREAM figure</li>
-              <li>The 3D township on the Overview tab: example houses and buildings, not a model of Elmina</li>
+              <li>The 3D township on the Overview tab: an artist's impression with example houses and buildings, not a model of Elmina</li>
             </ul>
           </article>
           <article className="about-col">
@@ -52,7 +52,7 @@ export default function AboutTab({ plan }) {
             <h2>Sources and licences</h2>
             <ul className="sources">
               {plan.sources.map((s) => <li key={s}>{s}</li>)}
-              <li>Software: FastAPI, pvlib, scikit-learn, React, Recharts, Leaflet, three.js (open source)</li>
+              <li>Software: FastAPI, pvlib, scikit-learn, React, Recharts, Leaflet, three.js (open source); 3D models: Kenney city kits (CC0)</li>
             </ul>
           </div>
         </section>

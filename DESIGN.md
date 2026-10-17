@@ -154,7 +154,9 @@ permanently so the page width never shifts.
 
 ## Elevation & Depth
 
-Flat. No shadows anywhere. Depth comes from the ink band against paper, and from the hatching.
+Flat. No shadows anywhere in the interface. Depth comes from the ink band against paper, and from the hatching.
+The one exception is inside the Overview's 3D township, which is the hoarding's "artist's
+impression" render: sun, sky and cast shadows live inside that picture only, never on UI chrome.
 Map labels and chart text use a white halo (text-shadow / SVG paint-order stroke) for
 legibility over data, not as depth.
 
@@ -200,13 +202,20 @@ through) and are placed by measured collision checks: close spots first, then a 
 never touching a rooftop dot, another buyer or another label.
 
 ### Example township (Overview tab)
-A three.js axonometric (orthographic camera, no perspective lean) of a tidy made-up layout:
-8 blocks of 8 houses, one block per example rooftop type, around 3 buyer buildings on a
-plaza. Flat plan colours for ground and roads; house panels go from dark slate to amber with
-that hour's solar for one roof of the type. Buyer buildings fill amber from the ground up by
-the share met by solar, with the rest in ink hatching (the grid), outlined in 1px ink. Labels
-on paper with an ink hairline; on phones the shares move into the key. Drawn only when the
-hour or size changes; falls back to the 2D site plan without WebGL. Always tagged EXAMPLE.
+The hoarding's artist's impression, set like a sales-gallery scale model: a made-up town on a
+base board with a 1px ink edge, seen through an orthographic camera (no perspective lean).
+Kenney CC0 low-poly models (white walls, slate roofs; every warm hue recoloured to a cool grey
+and the cars to greyscale, so amber stays solar-only): 8 house groups, one per example rooftop type, mixing terrace
+rows and landed houses, both rows facing a central plaza with Office A, the Retail building and
+Office B; roads with white lines, trees, a few cars and street lamps. Roof panels are unlit dark
+blue cells that turn to true amber with that hour's solar for one roof of the type. Beside each
+buyer building stands a wide bar in a 1px ink frame (the frame's height = 100% of that hour's
+need): unlit true amber from the bottom for the share met by solar (with a soft amber pool of
+light at its foot, scaled by that share), unlit ink hatching above for the grid, so both read at
+dawn and dusk. The sky behind is a CSS gradient that runs from dawn to dusk in cool blues only; the sun
+moves east to west and casts shadows. Labels on paper with an ink hairline sit on the bars;
+on phones the kWh move into the key. Drawn only when the hour or size changes; falls back to
+the 2D site plan without WebGL or if the models fail to load. Always tagged EXAMPLE.
 
 ## Do's and Don'ts
 

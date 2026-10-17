@@ -52,9 +52,11 @@ with a clear "Offline" banner. Commit the new file in `backend/data/demo_snapsho
 The dashboard plans the **next working day** in Selangor (skipping weekends and Selangor
 public holidays), so on a Friday it shows Monday, using a forecast made 3 days ahead.
 
-The Overview tab draws a 3D **example** township (not a model of Elmina) with the hour slider
-and "Play the day". It needs WebGL; without it, the Overview shows the 2D site plan instead.
-Everything it draws is generated in code, so it works offline.
+The Overview tab draws a 3D **example** township (an artist's impression, not a model of
+Elmina) with the hour slider and "Play the day". It needs WebGL; without it (or if the models
+fail to load) the Overview shows the 2D site plan instead. The low-poly models are Kenney city
+kits (CC0, public domain), bundled in `frontend/public/models/kenney/` with their licences and a
+note on what was changed, so it works offline.
 
 API (while running): `/api/plan?rooftops=50` returns the whole dashboard for that day
 (add `&day=2026-10-23` for another date);
