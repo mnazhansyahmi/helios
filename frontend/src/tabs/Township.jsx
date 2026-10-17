@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { number } from "../format.js";
 
 /**
  * The Overview's 3D township: an EXAMPLE, not a model of Elmina.
@@ -17,10 +18,10 @@ const PANEL_ON = new THREE.Color(SUN);
 const HOUSES_PER_BLOCK = 8;                 // 4 across, 2 deep
 const BLOCK_X = [-45, -15, 15, 45];
 const BLOCK_Z = [-23, 23];                  // far row: types 1-4, near row: types 5-8
-const BUYER_LAYOUT = [                      // tidy made-up layout: x position, footprint (w x d), height
-  { x: -21, w: 8, d: 8, h: 14 },            // Office A
-  { x: 0, w: 14, d: 9, h: 9 },              // Retail building: wide and low
-  { x: 21, w: 10, d: 10, h: 18 },           // Office B
+const BUYER_LAYOUT = [ // tidy made-up layout: x position, footprint (w x d), height, which way the label opens
+  { x: -21, w: 8, d: 8, h: 14, side: "left" },     // Office A
+  { x: 0, w: 14, d: 9, h: 9, side: "centre" },     // Retail building: wide and low
+  { x: 21, w: 10, d: 10, h: 18, side: "right" },   // Office B
 ];
 const VIEW_FROM = new THREE.Vector3(0.26, 0.53, 0.81).normalize(); // from the front-right, above
 const LOOK_AT = new THREE.Vector3(0, 3, 0);
@@ -215,10 +216,14 @@ export default function Township({ plan, t, hour, onFail }) {
         B.solarPart.scale.y = hs; B.solarPart.position.y = hs / 2;
         B.gridPart.scale.y = hg; B.gridPart.position.y = hs + hg / 2;
         B.textures.forEach((tex) => { tex.repeat.y = hg / 4; });
+        // label: this hour's kWh (rounded so solar + grid adds up to what the building needs)
         const row = plan.hours[hour].buyers[b.id];
+        const needs = Math.round(row.demand_kwh);
+        const solar = Math.min(needs, Math.round(row.solar_used_kwh));
+        // % from the unrounded kWh: every building gets the same share each hour, as in the big line
         const pct = row.demand_kwh > 0 ? Math.round((100 * Math.min(row.solar_used_kwh, row.demand_kwh)) / row.demand_kwh) : 0;
         const p = new THREE.Vector3(B.x, B.h, 0).project(w.camera);
-        return { id: b.id, name: b.name, pct, x: (p.x + 1) / 2, y: (1 - p.y) / 2 };
+        return { id: b.id, name: b.name, needs, solar, grid: needs - solar, pct, side: B.side, x: (p.x + 1) / 2, y: (1 - p.y) / 2 };
       });
 
       // the sun crosses from east (6am) to west (6pm); faces facing it get a little brighter
@@ -235,15 +240,19 @@ export default function Township({ plan, t, hour, onFail }) {
   return (
     <div className="township" ref={mountRef}>
       {labels.map((l) => (
-        <span key={l.id} className="township-label" style={{ left: `${l.x * 100}%`, top: `${l.y * 100}%` }}>
-          {l.name} <b>{l.pct}%</b>
-        </span>
+        <div key={l.id} className={`township-label label-${l.side}`} style={{ left: `${l.x * 100}%`, top: `${l.y * 100}%` }}>
+          <p className="label-name">{l.name} <small>{l.pct}% from solar</small></p>
+          <p>needs <b>{number(l.needs)}</b> kWh</p>
+          <p><i className="key key-sun" />solar <b>{number(l.solar)}</b> <i className="key key-hatch" />grid <b>{number(l.grid)}</b></p>
+        </div>
       ))}
       <p className="township-key">
         <span><i className="key key-sun" />Panels glow with each hour's solar</span>
         <span><i className="key key-sun" /><i className="key key-hatch" />Buyer buildings: amber = share from solar, hatched = from the grid</span>
         {/* on phones the floating labels would overlap, so the shares are listed here instead */}
-        <span className="township-shares">{labels.map((l) => `${l.name} ${l.pct}%`).join(" · ")}</span>
+        <span className="township-shares">
+          {labels.map((l) => `${l.name}: needs ${number(l.needs)}, solar ${number(l.solar)}, grid ${number(l.grid)} kWh`).join(" · ")}
+        </span>
       </p>
     </div>
   );
