@@ -202,19 +202,28 @@ through) and are placed by measured collision checks: close spots first, then a 
 never touching a rooftop dot, another buyer or another label.
 
 ### Example township (Overview tab)
-The hoarding's artist's impression, set like a sales-gallery scale model: a made-up town on a
-base board with a 1px ink edge, seen through an orthographic camera (no perspective lean).
+The hoarding's artist's impression, set like a sales-gallery scale model: a made-up round town
+on a round base whose rim (a 1px ink ring with a small "5 km CREAM limit · not to scale" tag) is
+the matching limit, seen through an orthographic camera (no perspective lean), low enough (27°)
+that the circle fills the stage's height on wide screens.
 Kenney CC0 low-poly models (white walls, slate roofs; every warm hue recoloured to a cool grey
-and the cars to greyscale, so amber stays solar-only): 8 house groups, one per example rooftop type, mixing terrace
-rows and landed houses, both rows facing a central plaza with Office A, the Retail building and
-Office B; roads with white lines, trees, a few cars and street lamps. Roof panels are unlit dark
-blue cells that turn to true amber with that hour's solar for one roof of the type. Beside each
-buyer building stands a wide bar in a 1px ink frame (the frame's height = 100% of that hour's
-need): unlit true amber from the bottom for the share met by solar (with a soft amber pool of
-light at its foot, scaled by that share), unlit ink hatching above for the grid, so both read at
-dawn and dusk. The sky behind is a CSS gradient that runs from dawn to dusk in cool blues only; the sun
-moves east to west and casts shadows. Labels on paper with an ink hairline sit on the bars;
-on phones the kWh move into the key. Drawn only when the hour or size changes; falls back to
+and the cars to greyscale, so amber stays solar-only): Office A, the Office B tower and the
+Retail building stand in one row across a round paved plaza, each with its bar just to its
+right at the same depth, so nothing stands in front of anything else; around them, three rings
+of houses between two ring roads, cut by 8 radial roads into 8 neighbourhoods, one per example
+rooftop type, mixing terrace and landed houses; asphalt roads with white dashed lines drawn in
+code, trees in the back gardens and a green belt at the rim, a few cars and street lamps. Roof
+panels are unlit dark blue cells that turn to true amber with that hour's solar for one roof of
+the type. The bars are the scene's loudest objects, taller than the tallest tower, each in a 1px
+ink frame (the frame's height = 100% of that hour's need): unlit true amber from the bottom for
+the share met by solar (with a soft amber pool of light at its foot, scaled by that share),
+unlit ink hatching above for the grid, so both read at dawn and dusk. The sky behind is a CSS
+gradient that runs from dawn to dusk in cool blues only; the sun moves east to west and casts
+shadows. Labels on paper with an ink hairline sit as close to their bar as they can without
+covering the plaza (right, left, above or below its top, never over another bar, label or tag,
+and never with a leader crossing one; the middle bar's label is placed first), joined by a short
+1px ink leader ending in a dot; the key stacks at the bottom left. On phones the kWh move into
+the key. Drawn only when the hour or size changes; falls back to
 the 2D site plan without WebGL or if the models fail to load. Always tagged EXAMPLE.
 
 ## Do's and Don'ts

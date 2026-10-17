@@ -8,7 +8,7 @@ attribution required (credited anyway). Each folder keeps its pack's `LICENSE.tx
 |---|---|---|---|
 | `suburban/` | City Kit (Suburban) 2.0 | https://kenney.nl/assets/city-kit-suburban | 8 house types, 2 trees |
 | `commercial/` | City Kit (Commercial) 2.1 | https://kenney.nl/assets/city-kit-commercial | 3 buyer buildings |
-| `roads/` | City Kit (Roads) | https://kenney.nl/assets/city-kit-roads | road tiles, street lamp |
+| `roads/` | City Kit (Roads) | https://kenney.nl/assets/city-kit-roads | street lamp |
 | `cars/` | Car Kit | https://kenney.nl/assets/car-kit | 4 cars |
 
 Only the GLB files the township uses are kept. They are served by the app itself,
@@ -18,11 +18,11 @@ so the 3D view works offline.
 
 Amber means solar on every Helios screen, so no model may show orange or yellow:
 
-- All packs: every warm colour (reds, oranges, browns, yellows: tree trunks, bricks, road
-  lines, shop awnings) is turned into a cool grey of the same lightness; road lines are white,
-  as on Malaysian roads.
+- All packs: every warm colour (reds, oranges, browns, yellows: tree trunks, bricks, shop
+  awnings) is turned into a cool grey of the same lightness.
 - `cars/`: the whole texture is greyscale, so the cars are white, grey and dark (no red or green).
 - `suburban/`: the pack's default texture (white walls) with the roof strips taken from the
   pack's own "variation C" texture (slate roofs), so the amber roof panels stand out.
 
-The scene itself (layout, panels, bars, sky) is made in code: `frontend/src/tabs/Township.jsx`.
+The scene itself (the round base, roads with white dashed lines, panels, bars, sky) is made in
+code: `frontend/src/tabs/Township.jsx`.

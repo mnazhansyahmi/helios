@@ -115,35 +115,40 @@
   font-size: clamp(12px, .85vw, 16px); font-weight: 600; color: var(--ink-2);
 }
 
-/* The 3D township: a canvas filling the stage, buyer labels over it, and a one-line key */
+/* The 3D township: a canvas filling the stage, buyer labels in the side columns with leader
+   lines to their bars, the rim's "5 km" tag, and a stacked key at the bottom left */
 .township { position: relative; flex: 1; min-height: 0; overflow: hidden; }
 .township canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.township-leaders { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.township-leaders line { stroke: var(--ink); stroke-width: 1px; }
+.township-leaders circle { fill: var(--ink); stroke: var(--paper); stroke-width: 1.5px; }
 .township-label {
-  position: absolute; transform: translate(-50%, calc(-100% - 12px)); white-space: nowrap; pointer-events: none;
-  padding: 4px 10px 5px; background: var(--paper); border: 1px solid var(--ink);
-  font-size: clamp(13px, .9vw, 18px); line-height: 1.3; color: var(--ink-2); font-variant-numeric: tabular-nums;
+  position: absolute; white-space: nowrap; pointer-events: none;
+  min-width: 12.5em;   /* the same width every hour, so labels do not shift as the numbers change */
+  padding: 5px 12px 6px; background: var(--paper); border: 1px solid var(--ink);
+  font-size: clamp(13px, .95vw, 19px); line-height: 1.3; color: var(--ink-2); font-variant-numeric: tabular-nums;
 }
-.township-label.label-left { transform: translate(calc(-100% + 28px), calc(-100% - 12px)); }
-.township-label.label-right { transform: translate(-28px, calc(-100% - 12px)); }
-/* a short ink tick from the label down to its building */
-.township-label::after { content: ""; position: absolute; top: 100%; left: 50%; width: 1px; height: 12px; background: var(--ink); }
-.township-label.label-left::after { left: auto; right: 27px; }
-.township-label.label-right::after { left: 27px; }
 .township-label .label-name { font-weight: 700; color: var(--ink-text); }
 .township-label .label-name small { margin-left: .4em; font-size: .8em; font-weight: 500; color: var(--ink-3); }
 .township-label b { font-stretch: 75%; font-weight: 800; font-size: 1.25em; color: var(--ink-text); }
 .township-label .key { width: .9em; height: .7em; margin-right: .3em; }
 .township-label .key-hatch { margin-left: .6em; }
+.township-ring {
+  position: absolute; transform: translate(-50%, 6px); white-space: nowrap; pointer-events: none;
+  padding: 1px 8px; background: rgba(255, 255, 255, .9); border: 1px solid var(--rule);
+  font-size: clamp(12px, .85vw, 16px); font-weight: 600; color: var(--ink-2);
+}
 .township-key {
-  position: absolute; left: var(--gutter); bottom: 10px; display: flex; flex-wrap: wrap; gap: .3rem 1.6rem;
-  padding: 4px 10px; background: rgba(255, 255, 255, .94); border: 1px solid var(--rule);
-  font-size: clamp(12px, .8vw, 15px); color: var(--ink-2);
+  position: absolute; left: var(--gutter); bottom: 10px; display: flex; flex-direction: column; gap: .2rem;
+  max-width: min(32vw, 360px); padding: 5px 10px; background: rgba(255, 255, 255, .94); border: 1px solid var(--rule);
+  font-size: clamp(12px, .8vw, 15px); line-height: 1.35; color: var(--ink-2);
 }
 .township-key .key + .key { margin-left: -.25em; }
 .township-shares { display: none; font-weight: 700; color: var(--ink-text); }
 @media (max-width: 900px) {
-  .township-label { display: none; }
+  .township-label, .township-leaders { display: none; }
   .township-shares { display: inline; }
+  .township-key { max-width: none; right: var(--gutter); }
 }
 
 /* Short screens (e.g. 1280x720): tighten the new tabs so each still fits without scrolling */
