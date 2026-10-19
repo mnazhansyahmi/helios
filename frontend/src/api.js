@@ -16,3 +16,11 @@ export async function fetchPlan(rooftops, signal) {
   }
   return response.json();
 }
+
+/** Twelve months of past weather through the models (For SDP "Season" view); null until generated. */
+export async function fetchSeason() {
+  const response = await fetch("/api/season");
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Server answered ${response.status}`);
+  return response.json();
+}

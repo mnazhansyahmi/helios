@@ -63,6 +63,18 @@ API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tha
 (add `&day=2026-10-23` for another date);
 `/docs` lists every endpoint.
 
+## Season view (For SDP tab)
+
+The For SDP tab's "Season" switch runs the same solar and demand models over the last 12 full months
+of real past weather (Open-Meteo: Himawari sunlight, ERA5 temperature, dew point and wind), at the
+noon-match rooftop count of that period's average day. It needs a one-time download while online:
+
+```bash
+.venv\Scripts\python backend/ml/05_season.py
+```
+
+This writes `backend/data/season.json`; commit it so the dashboard shows the season offline.
+
 ## How it is built
 
 | Part | What it does | Where |
