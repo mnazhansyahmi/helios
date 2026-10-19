@@ -4,15 +4,13 @@ import Tag from "../components/Tag.jsx";
 import { energy, number } from "../format.js";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const DAY_MONTHS = ["January", "February", "March", "April", "May", "June", "July",
-  "August", "September", "October", "November", "December"];
 
 /** "2026-09" -> "Sep 2026" */
 const monthName = (ym) => `${MONTHS[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}`;
 /** Days in a "2026-09" month (28-31). */
 const daysIn = (ym) => new Date(Date.UTC(Number(ym.slice(0, 4)), Number(ym.slice(5)), 0)).getUTCDate();
-/** "2025-10-01" -> "1 October 2025" */
-const dayName = (iso) => `${Number(iso.slice(8))} ${DAY_MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
+/** "2025-10-01" -> "1 Oct 2025" */
+const dayName = (iso) => `${Number(iso.slice(8))} ${MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 
 /**
  * For SDP, "Season": the same solar and demand models run over twelve months of real past weather
@@ -34,11 +32,18 @@ export default function SeasonView() {
   }
 
   const maxSurplus = Math.max(...season.months.map((m) => m.surplus_kwh), 1);
+  // "steady" is only said while every buyer's monthly share stays within 3 points over the year
+  const spread = Math.max(...season.buyers.map((b) => {
+    const pcts = season.months.map((m) => m.allocation_pct[b.id]).filter((v) => v != null);
+    return Math.max(...pcts) - Math.min(...pcts);
+  }));
+  const reading = spread <= 3
+    ? "shares stay steady for these stand-in buildings; solar coverage and unused solar move with the weather."
+    : "shows how shares change through the year.";
   return (
     <section className="season" aria-label="Season: past weather through the models">
       <p className="season-label">
-        <b>Based on past weather ({dayName(season.from)} – {dayName(season.to)}), not a forecast</b> — shows how shares
-        change through the year. <Tag kind="REAL" />
+        <span><b>Based on past weather ({dayName(season.from)} – {dayName(season.to)}), not a forecast</b> — {reading} <Tag kind="REAL" /></span>
         <span className="season-at">At {number(season.rooftops)} roofs ({season.rooftops_rule}) <Tag kind="EXAMPLE" /></span>
       </p>
       <div className="season-table-wrap">
