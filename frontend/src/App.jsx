@@ -49,6 +49,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (document.querySelector("dialog[open]")) return;   // the scenario modal is open: keys stay in it
       const el = e.target;
       if (el.isContentEditable || el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "range")) return;
       const id = tabForKey(e.key);

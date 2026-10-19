@@ -143,8 +143,9 @@ for reading, so the page stays one voice.
 
 Five tabs (keys 1–5): Overview, For SDP, Solar, Demand, About the data. Every tab fits one screen with no
 scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768. The Overview tells the whole story:
-an ink band (the day line, small, grey and on one line; the hour line, the only headline; then one row of controls: Play, the hour slider, the
-rooftop slider, the noon-match preset), then the 3D township (left, 3 : 2) beside the 24-hour
+an ink band (the day line, small, grey and on one line; the hour line, the only headline; then one row of controls: Play and a shorter hour slider on the
+left, a small "Scenario: 337 roofs" button with a gear on the right, which opens the rooftop slider and
+the noon-match preset in a modal), then the 3D township (left, 3 : 2) beside the 24-hour
 chart (right), then the buyer cards (three buyers, with one line under them pointing to About the data for the
 tags). Clear space (clamp(10px, 1.3vw, 26px)) separates the band, the township/chart row and the cards. When a
 screen is crowded the day line shrinks first; the hour line and the chart never do. Screens
@@ -182,7 +183,9 @@ rectangles. Buyer markers are squares that fill amber from the bottom.
 - **Focus:** 3px white outline, 3px offset on the band; 3px ink outline on white.
 
 ### Scenario slider
-Condensed rooftop count beside the always-visible "scenario, not a CREAM figure" note and
+Lives in a modal (the band's ink, a hairline frame, a dimmed backdrop) opened by the small "Scenario:
+N roofs" button; Esc, the backdrop or Done closes it, and number keys do not switch tabs while it is
+open. Inside: condensed rooftop count beside the always-visible "scenario, not a CREAM figure" note and
 EXAMPLE tag, above a 10px track in band-track with amber fill up to the value, a square white
 thumb with an amber border, and a "noon match" tick under the track.
 

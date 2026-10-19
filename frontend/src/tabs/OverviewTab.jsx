@@ -153,13 +153,43 @@ function ScenarioBox({ scenario, rooftops, onChange }) {
   );
 }
 
+/** The gear icon on the scenario button (drawn, not a text glyph). */
+const Gear = () => (
+  <svg className="scenario-gear" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z M10.3 2h3.4l.5 2.6 1.9.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.9 2.6.5v3.4l-2.6.5-.8 1.9 1.5 2.2-2.4 2.4-2.2-1.5-1.9.8-.5 2.6h-3.4l-.5-2.6-1.9-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.9L2 13.7v-3.4l2.6-.5.8-1.9-1.5-2.2 2.4-2.4 2.2 1.5 1.9-.8Z"
+          fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+  </svg>
+);
+
+/**
+ * The scenario lives in a modal so the band stays calm: a small always-visible button
+ * ("Scenario: 337 roofs") opens it; Esc, the backdrop or Done closes it.
+ */
+function Scenario({ scenario, rooftops, onChange }) {
+  const dialog = useRef(null);
+  const close = () => dialog.current?.close();
+  return (
+    <>
+      <button type="button" className="scenario-open" onClick={() => dialog.current?.showModal()} aria-haspopup="dialog">
+        Scenario: <strong>{rooftops.toLocaleString("en-MY")}</strong> roofs <Gear />
+      </button>
+      <dialog className="scenario-dialog" ref={dialog} aria-label="Scenario"
+              onClick={(e) => { if (e.target === dialog.current) close(); }}>
+        <ScenarioBox scenario={scenario} rooftops={rooftops} onChange={onChange} />
+        <button type="button" className="scenario-done" onClick={close}>Done</button>
+      </dialog>
+    </>
+  );
+}
+
 /** "noon" -> "Noon", "3pm" stays "3pm": the hour line starts with a capital. */
 const capitalised = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 
 /**
  * Tab 1, "Overview": the whole story on one screen.
  *  - band: the day in one sentence; the chosen hour in one big line; Play the day (6am-9pm in
- *    ~10 s, 2 s hold at 3pm), the hour slider, the rooftop slider and the noon-match preset
+ *    ~10 s, 2 s hold at 3pm), the hour slider, and the scenario button (rooftop slider and
+ *    noon-match preset in a modal)
  *  - left: the 3D example township (2D site plan without WebGL); right: the 24-hour chart with
  *    an hour marker that follows Play
  *  - bottom: the three buyer buildings over the whole day
@@ -187,7 +217,7 @@ export default function OverviewTab({ plan, rooftops, onRooftops, error }) {
         </p>
         <div className="ov-controls">
           <DayTimeline t={t} hour={hour} playing={playing} onPlay={play} onScrub={scrub} />
-          <ScenarioBox scenario={plan.scenario} rooftops={rooftops} onChange={onRooftops} />
+          <Scenario scenario={plan.scenario} rooftops={rooftops} onChange={onRooftops} />
         </div>
         {error && <p className="band-error" role="alert">Lost contact with the server; showing the last plan.</p>}
       </header>

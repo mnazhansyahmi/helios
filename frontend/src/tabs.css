@@ -172,10 +172,33 @@
 .ov-line { font-stretch: 75%; font-weight: 800; font-size: clamp(30px, 3.5vw, 74px); line-height: 1.02; letter-spacing: -0.012em; }
 .ov-line .figure-sun { color: var(--sun); }
 /* Two groups of controls: "The day" (Play + timeline, the most width) and the bordered "Scenario" box */
+/* "The day" (Play + a shorter timeline) on the left, the small scenario button on the right */
 .ov-controls {
-  display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 46vw) auto; justify-content: space-between;
   align-items: end; gap: .8rem clamp(24px, 3vw, 64px); margin-top: clamp(2px, .3vw, 6px);
 }
+.scenario-open {
+  display: inline-flex; align-items: center; gap: .45em; margin-bottom: 1.35em; cursor: pointer;
+  padding: .35em .8em; background: transparent; color: var(--band-text-2); border: 1px solid var(--band-track);
+  font-size: clamp(13px, .95vw, 18px); font-weight: 600; white-space: nowrap;
+}
+.scenario-open strong { color: var(--paper); font-weight: 800; font-variant-numeric: tabular-nums; }
+.scenario-open:hover { color: var(--paper); border-color: var(--band-text-2); }
+.scenario-open:focus-visible { outline: 3px solid var(--paper); outline-offset: 3px; }
+.scenario-gear { width: 1.15em; height: 1.15em; }
+/* the modal: the band's ink, the scenario box inside, Done under it */
+.scenario-dialog {
+  width: min(92vw, 640px); padding: clamp(16px, 1.6vw, 28px); border: 1px solid var(--band-track);
+  background: var(--ink); color: var(--paper);
+}
+.scenario-dialog::backdrop { background: rgba(14, 26, 36, .55); }
+.scenario-dialog .ov-scenario-box { border: 0; padding: 0; }
+.scenario-done {
+  display: block; margin: clamp(10px, 1vw, 18px) 0 0 auto; padding: .35em 1.1em; cursor: pointer;
+  background: transparent; color: var(--paper); border: 2px solid var(--paper);
+  font-stretch: 75%; font-weight: 800; font-size: clamp(15px, 1.05vw, 20px);
+}
+.scenario-done:hover { background: rgba(255, 255, 255, .1); }
 .ov-group { min-width: 0; margin: 0; padding: 0; border: 0; display: grid; align-items: center; }
 .ov-group legend {
   padding: 0; margin-bottom: .3rem; font-size: clamp(10px, .62vw, 12px); font-weight: 700;
@@ -314,7 +337,7 @@
   .ov-rooftops-sep { display: none; }
 }
 @media (min-width: 901px) and (max-width: 1200px) {
-  .ov-controls { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  .ov-controls { grid-template-columns: minmax(0, 56vw) auto; }
 }
 
 /* Phones and narrow windows: the Overview and For SDP stack */
