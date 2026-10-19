@@ -81,7 +81,7 @@
 
 /* ============================================================== For SDP tab */
 /* head / flow strip (Data -> Forecast -> Decision -> Benefit) / four decision cards / footer */
-.tab-sdp { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.tab-sdp { grid-template-rows: auto auto minmax(0, 1fr) auto auto; }
 .flow {
   --flow-gap: clamp(36px, 3.4vw, 68px);
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--flow-gap);
@@ -95,45 +95,58 @@
   position: absolute; top: .1em; left: calc(var(--flow-gap) / -2 - clamp(10px, .7vw, 14px));
   width: clamp(20px, 1.4vw, 28px); height: clamp(20px, 1.4vw, 28px); color: var(--ink);
 }
-/* 2 x 2 cards; in each, the figure (left) and what SDP decides and why (right) */
+/* four cards in a row; each reads top to bottom: problem, evidence, number, SDP decides, benefit */
 .decisions {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr));
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px; background: var(--rule); min-height: 0;
 }
 .decision {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas: "title title" "figure text"; align-items: start;
-  column-gap: clamp(20px, 2.4vw, 48px); row-gap: clamp(6px, .7vw, 14px); min-height: 0; background: var(--paper);
-  padding: clamp(12px, 1.3vw, 26px) clamp(16px, 1.8vw, 36px);
+  display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; align-content: start;
+  row-gap: clamp(6px, .7vw, 14px); min-height: 0; overflow: hidden; background: var(--paper);
+  padding: clamp(12px, 1.3vw, 26px) clamp(12px, 1.4vw, 28px);
 }
-.decision:nth-child(odd) { padding-left: var(--gutter); }
-.decision:nth-child(even) { padding-right: var(--gutter); }
-.decision h2 { grid-area: title; display: flex; align-items: center; gap: .5em; font-size: clamp(15px, 1.15vw, 23px); font-weight: 700; }
-.decision-figure { grid-area: figure; display: grid; gap: clamp(6px, .6vw, 12px); }
-.decision-text { grid-area: text; display: grid; gap: clamp(8px, .8vw, 16px); padding-left: clamp(14px, 1.6vw, 32px); border-left: 1px solid var(--rule); }
-.decision-big { font-size: clamp(15px, 1.2vw, 24px); color: var(--ink-2); }
-.decision-big strong {
-  font-stretch: 75%; font-weight: 800; font-size: clamp(44px, 4.6vw, 96px); line-height: 1;
-  color: var(--ink-text); font-variant-numeric: tabular-nums; margin-right: .12em;
+.decision:first-child { padding-left: var(--gutter); }
+.decision:last-child { padding-right: var(--gutter); }
+.decision h2 { font-size: clamp(15px, 1.25vw, 25px); font-weight: 800; line-height: 1.2; text-wrap: balance; }
+.decision-evidence { display: flex; flex-wrap: wrap; align-items: center; gap: .35em .5em; }
+.evidence {
+  padding: .15em .45em; background: var(--zinc-50); color: var(--ink-3);
+  font-size: clamp(11px, .72vw, 14px); line-height: 1.3;
 }
-.shares { display: grid; grid-template-columns: repeat(3, max-content); gap: .3rem clamp(12px, 1.4vw, 28px); }
-.shares li { display: grid; }
-.shares strong { font-size: clamp(28px, 3vw, 64px); }
-.shares span { font-size: clamp(12px, .85vw, 16px); white-space: nowrap; }
-.decision-detail { font-size: clamp(12px, .85vw, 16px); line-height: 1.4; color: var(--ink-2); }
+.decision-figure { display: grid; align-content: start; gap: clamp(6px, .6vw, 12px); }
+.decision-text { display: grid; gap: clamp(6px, .6vw, 12px); padding-top: clamp(8px, .8vw, 16px); border-top: 1px solid var(--rule); }
+.decision-big { font-size: clamp(14px, 1.05vw, 21px); color: var(--ink-2); }
+.decision-big strong, .figure-rows strong {
+  font-stretch: 75%; font-weight: 800; line-height: 1;
+  color: var(--ink-text); font-variant-numeric: tabular-nums; margin-right: .15em;
+}
+.decision-big strong { font-size: clamp(40px, min(5vw, 8.4vh), 108px); }
+.figure-rows { display: grid; gap: clamp(4px, .5vw, 10px); }
+.figure-rows li { display: flex; align-items: baseline; gap: .4em; min-width: 0; }
+.figure-rows strong { flex: 0 0 auto; min-width: 2.2em; font-size: clamp(28px, min(3.6vw, 6.2vh), 76px); }
+.figure-rows span { font-size: clamp(12px, .95vw, 18px); line-height: 1.3; color: var(--ink-2); }
+.figure-rows b { color: var(--ink-text); }
+.decision-detail { font-size: clamp(12px, .8vw, 15px); line-height: 1.4; color: var(--ink-2); }
 .decision-detail b { color: var(--ink-text); font-weight: 700; }
-.sweep { display: grid; gap: .35rem; }
+.sweep { display: grid; gap: clamp(6px, 1.6vh, 18px); font-size: clamp(12px, .95vw, 18px); }
 .sweep li {
-  display: grid; grid-template-columns: minmax(0, 6.5em) minmax(0, 1fr) 2.6em; align-items: center; gap: .6rem;
+  display: grid; grid-template-columns: minmax(0, 5.6em) minmax(0, 1fr) 2.6em; align-items: center; gap: .5rem;
   font-variant-numeric: tabular-nums;
 }
 .sweep li.is-preset { color: var(--ink-text); font-weight: 700; }
 .sweep-n small { display: block; font-size: .8em; font-weight: 600; color: var(--ink-3); }
-.sweep-bar { position: relative; height: 12px; background: var(--hatch); box-shadow: inset 0 0 0 1px var(--ink); }
+.sweep-bar { position: relative; height: clamp(12px, 1.8vh, 22px); background: var(--hatch); box-shadow: inset 0 0 0 1px var(--ink); }
 .sweep-bar span { display: block; height: 100%; background: var(--sun); box-shadow: inset 0 0 0 1px var(--sun-edge); }
-.sweep-pct { text-align: right; }
-.decision-line { font-size: clamp(13px, 1vw, 20px); line-height: 1.4; color: var(--ink-2); }
+.sweep-pct { text-align: right; font-stretch: 75%; font-weight: 800; font-size: 1.6em; }
+.decision-line { font-size: clamp(13px, .95vw, 19px); line-height: 1.35; color: var(--ink-2); }
 .decision-line b { color: var(--ink-text); font-weight: 700; }
+/* thin reporting row, then the footer */
+.sdp-report {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .2em .6em;
+  padding: clamp(6px, .6vw, 12px) var(--gutter); border-top: 1px solid var(--rule);
+  font-size: clamp(13px, .95vw, 18px); color: var(--ink-2); font-variant-numeric: tabular-nums;
+}
+.sdp-report b { color: var(--ink-text); font-weight: 700; }
 .sdp-foot {
   padding: clamp(6px, .6vw, 12px) var(--gutter); background: var(--zinc-50); border-top: 1px solid var(--rule);
   font-size: clamp(12px, .85vw, 16px); color: var(--ink-2);
@@ -301,9 +314,7 @@
   .flow, .decisions { grid-template-columns: minmax(0, 1fr); }
   .flow { row-gap: .8rem; }
   .flow-arrow { display: none; }
-  .decisions { grid-template-rows: none; }
-  .decision { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "figure" "text"; padding-left: var(--gutter); padding-right: var(--gutter); }
-  .decision-text { padding-left: 0; border-left: 0; }
+  .decision { padding-left: var(--gutter); padding-right: var(--gutter); }
   .ov-controls { grid-template-columns: minmax(0, 1fr); }
   .ov-main, .buyer-cards { grid-template-columns: minmax(0, 1fr); }
   .ov-stage { min-height: 360px; }

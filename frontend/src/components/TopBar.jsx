@@ -1,13 +1,8 @@
 import Tag from "./Tag.jsx";
 import { fullDate, leadText, shortDate } from "../format.js";
+import { TABS } from "./tabs.js";
 
-export const TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "sdp", label: "For SDP" },
-  { id: "solar", label: "Solar" },
-  { id: "demand", label: "Demand" },
-  { id: "about", label: "About the data" },
-];
+export { TABS };
 
 /**
  * The shared top row on every tab: wordmark, the five tabs (keys 1-5 also switch them),
