@@ -4,6 +4,7 @@ Helios API (FastAPI). Start it with `python run_demo.py` from the HELIOS folder.
 Endpoints
   GET /api/plan?rooftops=50&day=2026-10-16   the whole dashboard for one day
   GET /api/accuracy                          held-out accuracy results (full detail)
+  GET /api/season                            12 months of past weather through the models (ml/05_season.py)
   GET /api/health                            is the server up?
   GET /docs                                  interactive API docs (FastAPI built-in)
   GET /                                      the dashboard (once frontend/ is built)
@@ -14,7 +15,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import config, planner, reports
+from . import config, planner, reports, season
 
 app = FastAPI(title="I-SOLAR API", description="Solar and demand planning prototype for CREAM, City of Elmina")
 
@@ -32,6 +33,15 @@ def plan(rooftops: int = Query(config.FLEET_DEFAULT, ge=config.FLEET_MIN, le=con
 @app.get("/api/accuracy")
 def accuracy():
     return reports.load_accuracy()
+
+
+@app.get("/api/season")
+def season_summary():
+    """Per-month allocation %, coverage and unused solar over past weather; 404 until it is generated."""
+    result = season.load_season()
+    if result is None:
+        raise HTTPException(status_code=404, detail="Season not generated yet: run python backend/ml/05_season.py")
+    return result
 
 
 @app.get("/api/health")

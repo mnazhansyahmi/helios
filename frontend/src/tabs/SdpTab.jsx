@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchPlan } from "../api.js";
 import Tag from "../components/Tag.jsx";
+import SeasonView from "./SeasonView.jsx";
 import { energy, hourName, number, weekdayName } from "../format.js";
 import { allocationShares, growthBenefit, growthCounts, roofBenefit, roofKind, roofYields, storage } from "./sdpNumbers.js";
 
@@ -45,6 +46,7 @@ export default function SdpTab({ plan }) {
   // 4. Coverage at three roof counts (plans fetched from the same server, so it also works offline)
   const counts = growthCounts(scenario);
   const [sweep, setSweep] = useState({});
+  const [view, setView] = useState("day");            // "day": the next working day's four cards; "season": past year
   useEffect(() => {
     const controller = new AbortController();
     Promise.all(counts.map((n) => fetchPlan(n, controller.signal)))
@@ -54,11 +56,27 @@ export default function SdpTab({ plan }) {
   }, [plan.day, counts.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="tab tab-page tab-sdp" id="panel-sdp" role="tabpanel" aria-labelledby="tab-sdp">
-      <header className="page-head">
-        <h1>For SDP: four decisions as the CREAM LEGA</h1>
-        <p>From {day}'s forecast plan. I-SOLAR suggests; SDP decides; TNB runs the grid.</p>
+    <div className={`tab tab-page tab-sdp${view === "season" ? " is-season" : ""}`} id="panel-sdp" role="tabpanel" aria-labelledby="tab-sdp">
+      <header className="page-head page-head-split">
+        <div>
+          <h1>For SDP: four decisions as the CREAM LEGA</h1>
+          <p>
+            {view === "day" ? `From ${day}'s forecast plan.` : "The same models over a year of past weather."}
+            {" "}I-SOLAR suggests; SDP decides; TNB runs the grid.
+          </p>
+        </div>
+        <div className="view-switch" role="group" aria-label="View">
+          <button type="button" aria-pressed={view === "day"} onClick={() => setView("day")}>{day}</button>
+          <button type="button" aria-pressed={view === "season"} onClick={() => setView("season")}>Season</button>
+        </div>
       </header>
+
+      {view === "season" ? (
+        <>
+          <SeasonView />
+          <p className="sdp-foot">Past weather through the same models, not a forecast. Example sites and stand-in buyers — not CREAM data.</p>
+        </>
+      ) : (<>
 
       <ol className="flow" aria-label="From data to benefit">
         <li><b>Data</b><span>Weather forecast + building demand</span></li>
@@ -146,6 +164,7 @@ export default function SdpTab({ plan }) {
       </p>
 
       <p className="sdp-foot">Based on one day's forecast; real decisions need a full-season run. Example sites and stand-in buyers — not CREAM data.</p>
+      </>)}
     </div>
   );
 }

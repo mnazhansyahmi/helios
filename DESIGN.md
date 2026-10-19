@@ -216,6 +216,13 @@ sites and stand-in buyers. Every figure is computed from the plan (`tabs/sdpNumb
 models, no ringgit, no invented CREAM figures). When 1024×768 is tight, shorten text first, then
 shrink type; never drop the problem or benefit lines. Stacks below 900px.
 
+### Season view (For SDP tab)
+A Monday / Season switch (ink-outlined segmented buttons) at the right of the For SDP head. Season
+swaps the cards for a zinc label strip ("Based on past weather (dates), not a forecast — …", REAL; the
+roof count, EXAMPLE) over one hairline-ruled row per month: each buyer's share of sunlit-hour demand,
+solar coverage (amber over ink hatching, as the sweep bars) and unused solar (pale amber). Months with
+satellite gaps show "27/30 days". Data: `backend/data/season.json` from `backend/ml/05_season.py`.
+
 ### Site plan (fallback only)
 Shown in the township's place when WebGL or the 3D models are unavailable. OpenStreetMap tiles
 in faint greyscale; the map always frames the whole 5 km matching ring

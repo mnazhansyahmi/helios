@@ -1,0 +1,183 @@
+{
+ "from": "2025-10-01",
+ "to": "2026-09-30",
+ "rooftops": 293,
+ "rooftops_rule": "noon match on the period's average day",
+ "buyers": [
+  {
+   "id": "B1",
+   "name": "Office A"
+  },
+  {
+   "id": "B2",
+   "name": "Retail building"
+  },
+  {
+   "id": "B3",
+   "name": "Office B"
+  }
+ ],
+ "months": [
+  {
+   "month": "2025-10",
+   "days": 31,
+   "allocation_pct": {
+    "B1": 15.9,
+    "B2": 19.7,
+    "B3": 64.5
+   },
+   "coverage_pct": 34.4,
+   "surplus_kwh": 13963,
+   "demand_kwh": 581952,
+   "solar_kwh": 213873
+  },
+  {
+   "month": "2025-11",
+   "days": 30,
+   "allocation_pct": {
+    "B1": 15.4,
+    "B2": 19.7,
+    "B3": 64.8
+   },
+   "coverage_pct": 30.7,
+   "surplus_kwh": 6272,
+   "demand_kwh": 555896,
+   "solar_kwh": 176661
+  },
+  {
+   "month": "2025-12",
+   "days": 31,
+   "allocation_pct": {
+    "B1": 15.7,
+    "B2": 19.5,
+    "B3": 64.8
+   },
+   "coverage_pct": 31.9,
+   "surplus_kwh": 7950,
+   "demand_kwh": 569720,
+   "solar_kwh": 189496
+  },
+  {
+   "month": "2026-01",
+   "days": 30,
+   "allocation_pct": {
+    "B1": 15.6,
+    "B2": 19.6,
+    "B3": 64.8
+   },
+   "coverage_pct": 34.2,
+   "surplus_kwh": 13294,
+   "demand_kwh": 564381,
+   "solar_kwh": 206578
+  },
+  {
+   "month": "2026-02",
+   "days": 27,
+   "allocation_pct": {
+    "B1": 15.4,
+    "B2": 19.7,
+    "B3": 64.9
+   },
+   "coverage_pct": 35.3,
+   "surplus_kwh": 16906,
+   "demand_kwh": 510898,
+   "solar_kwh": 197340
+  },
+  {
+   "month": "2026-03",
+   "days": 30,
+   "allocation_pct": {
+    "B1": 15.6,
+    "B2": 19.6,
+    "B3": 64.8
+   },
+   "coverage_pct": 37.9,
+   "surplus_kwh": 18789,
+   "demand_kwh": 570265,
+   "solar_kwh": 235113
+  },
+  {
+   "month": "2026-04",
+   "days": 28,
+   "allocation_pct": {
+    "B1": 16.0,
+    "B2": 19.8,
+    "B3": 64.2
+   },
+   "coverage_pct": 36.0,
+   "surplus_kwh": 7782,
+   "demand_kwh": 547356,
+   "solar_kwh": 205032
+  },
+  {
+   "month": "2026-05",
+   "days": 30,
+   "allocation_pct": {
+    "B1": 15.3,
+    "B2": 19.7,
+    "B3": 65.0
+   },
+   "coverage_pct": 34.3,
+   "surplus_kwh": 9333,
+   "demand_kwh": 576992,
+   "solar_kwh": 207243
+  },
+  {
+   "month": "2026-06",
+   "days": 28,
+   "allocation_pct": {
+    "B1": 15.7,
+    "B2": 19.8,
+    "B3": 64.5
+   },
+   "coverage_pct": 35.0,
+   "surplus_kwh": 4691,
+   "demand_kwh": 541357,
+   "solar_kwh": 194383
+  },
+  {
+   "month": "2026-07",
+   "days": 29,
+   "allocation_pct": {
+    "B1": 16.0,
+    "B2": 19.7,
+    "B3": 64.2
+   },
+   "coverage_pct": 35.0,
+   "surplus_kwh": 3166,
+   "demand_kwh": 564917,
+   "solar_kwh": 200977
+  },
+  {
+   "month": "2026-08",
+   "days": 30,
+   "allocation_pct": {
+    "B1": 15.3,
+    "B2": 20.0,
+    "B3": 64.8
+   },
+   "coverage_pct": 35.6,
+   "surplus_kwh": 8459,
+   "demand_kwh": 602824,
+   "solar_kwh": 223061
+  },
+  {
+   "month": "2026-09",
+   "days": 27,
+   "allocation_pct": {
+    "B1": 16.1,
+    "B2": 19.8,
+    "B3": 64.2
+   },
+   "coverage_pct": 34.9,
+   "surplus_kwh": 7532,
+   "demand_kwh": 544466,
+   "solar_kwh": 197587
+  }
+ ],
+ "sources": [
+  "Sunlight: Open-Meteo, Himawari satellite (JMA/JAXA)",
+  "Temperature, dew point, wind: Open-Meteo, ERA5 reanalysis"
+ ],
+ "generated_at": "2026-10-20T00:10"
+}
