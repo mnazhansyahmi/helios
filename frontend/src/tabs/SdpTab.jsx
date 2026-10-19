@@ -72,7 +72,7 @@ export default function SdpTab({ plan }) {
           problem="Solar output changes with weather and roof direction."
           evidence="General" tag="EXAMPLE"
           decides="which roof types to sign first."
-          benefit="more solar from each roof signed."
+          benefit="know which roof types give the most solar."
         >
           <ul className="figure-rows" aria-label="kWh per kWp for one roof, best and worst example type">
             {[["Best", roofs.best], ["Worst", roofs.worst]].map(([label, r]) => (

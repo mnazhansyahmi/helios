@@ -204,8 +204,8 @@ Written from SDP's side ("SDP decides…"). A zinc flow strip (Data → Forecast
 to SDP, one line each, drawn arrows) above four hairline-divided cards in one row, in this order:
 roof yield, allocation %, storage, growth. Each card reads top to bottom: the problem (bold, one
 line), its evidence as a small grey chip (a CREAM clause or target) beside the provenance tag, one
-big condensed figure with its basis in small print, then, behind a 1px rule pinned to the card's
-foot so the four line up, "SDP decides" and "Benefit to SDP". Amber appears only in the
+big condensed figure with its basis in small print, then, behind a 1px rule directly under the
+figure, "SDP decides" and "Benefit to SDP" (any spare height collects at the card's foot). Amber appears only in the
 solar-coverage bars (amber over ink hatching). Under the cards, a thin reporting row (expected grid
 purchase, estimated CO₂ avoided), then a zinc footer saying it is one day's forecast with example
 sites and stand-in buyers. Every figure is computed from the plan (`tabs/sdpNumbers.js`; no new
