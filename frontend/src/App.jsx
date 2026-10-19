@@ -17,22 +17,23 @@ export default function App() {
   const [plan, setPlan] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
   const [rooftops, setRooftops] = useState(null); // shared by every tab; starts at the noon match
+  const [dayType, setDayType] = useState("forecast"); // "forecast", or a real past day's sunlight (what-if)
   const [ready, setReady] = useState(false);       // true once the first noon-match plan has arrived
   const [error, setError] = useState(null);
   const [tab, setTab] = useState(() => tabFromHash() ?? "overview");
   const inFlight = useRef(null);
 
   // Fetch the plan; a newer request cancels an older one, so dragging the slider stays snappy.
-  const load = useCallback((count) => {
+  const load = useCallback((count, type) => {
     inFlight.current?.abort();
     const controller = new AbortController();
     inFlight.current = controller;
-    fetchPlan(count, controller.signal)
+    fetchPlan(count, controller.signal, type)
       .then((next) => { setPlan(next); setError(null); })
       .catch((e) => { if (e.name !== "AbortError") setError(e); });
   }, []);
 
-  useEffect(() => { load(rooftops); }, [rooftops, load]);
+  useEffect(() => { load(rooftops, dayType); }, [rooftops, dayType, load]);
   useEffect(() => { fetchAccuracy().then(setAccuracy).catch(() => {}); }, []);
 
   // The pitch opens at the noon match: once the first plan tells us that number, switch to it.
@@ -49,7 +50,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
-      if (document.querySelector("dialog[open]")) return;   // the scenario modal is open: keys stay in it
+      if (document.querySelector("dialog[open]")) return;   // the settings panel is open: keys stay in it
       const el = e.target;
       if (el.isContentEditable || el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "range")) return;
       const id = tabForKey(e.key);
@@ -70,7 +71,7 @@ export default function App() {
             <div className="headline">
               <h1>Can't reach the I-SOLAR server.</h1>
               <p className="headline-sub">Start it with <code>python run_demo.py</code>, then try again.</p>
-              <button type="button" className="preset preset-small" onClick={() => load(rooftops)}>Try again</button>
+              <button type="button" className="preset preset-small" onClick={() => load(rooftops, dayType)}>Try again</button>
             </div>
           ) : (
             <div className="headline"><h1 className="loading">Loading the next working day's forecast…</h1></div>
@@ -83,8 +84,9 @@ export default function App() {
   const shownRooftops = rooftops ?? plan.scenario.rooftops;
   return (
     <div className="app">
-      <TopBar tab={tab} onTab={changeTab} plan={plan} />
-      {tab === "overview" && <OverviewTab plan={plan} rooftops={shownRooftops} onRooftops={setRooftops} error={error} />}
+      <TopBar tab={tab} onTab={changeTab} plan={plan}
+              settings={{ rooftops: shownRooftops, onRooftops: setRooftops, dayType, onDayType: setDayType }} />
+      {tab === "overview" && <OverviewTab plan={plan} error={error} />}
       {tab === "sdp" && <SdpTab plan={plan} />}
       {tab === "solar" && <SolarTab plan={plan} accuracy={accuracy} />}
       {tab === "demand" && <DemandTab plan={plan} accuracy={accuracy} />}

@@ -49,11 +49,11 @@ export default function SdpTab({ plan }) {
   const [view, setView] = useState("day");            // "day": the next working day's four cards; "season": past year
   useEffect(() => {
     const controller = new AbortController();
-    Promise.all(counts.map((n) => fetchPlan(n, controller.signal)))
+    Promise.all(counts.map((n) => fetchPlan(n, controller.signal, plan.what_if?.id)))
       .then((plans) => setSweep(Object.fromEntries(plans.map((p) => [p.scenario.rooftops, p.totals.coverage_pct]))))
       .catch(() => {});
     return () => controller.abort();
-  }, [plan.day, counts.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [plan.day, plan.what_if?.id, counts.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={`tab tab-page tab-sdp${view === "season" ? " is-season" : ""}`} id="panel-sdp" role="tabpanel" aria-labelledby="tab-sdp">

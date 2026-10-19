@@ -38,6 +38,12 @@ export function fullDate(isoDay) {
   return `${weekdayName(isoDay)} ${d} ${MONTHS[m - 1]} ${y}`;
 }
 
+/** "2025-10-23" -> "23 Oct 2025" */
+export function shortDay(isoDay) {
+  const [y, m, d] = isoDay.split("-").map(Number);
+  return `${d} ${MONTHS[m - 1].slice(0, 3)} ${y}`;
+}
+
 /** "2026-10-19" -> "Mon 19 Oct" (for narrow screens) */
 export function shortDate(isoDay) {
   const [, m, d] = isoDay.split("-").map(Number);

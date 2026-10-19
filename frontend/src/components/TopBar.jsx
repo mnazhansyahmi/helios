@@ -1,14 +1,16 @@
+import Settings from "./Settings.jsx";
 import Tag from "./Tag.jsx";
-import { fullDate, leadText, shortDate } from "../format.js";
+import { fullDate, leadText, shortDate, shortDay } from "../format.js";
 import { TABS } from "./tabs.js";
 
 export { TABS };
 
 /**
- * The shared top row on every tab: wordmark, the five tabs (keys 1-5 also switch them),
- * and the planned day. Long and short date forms swap by screen width (see styles.css).
+ * The shared top row on every tab: wordmark, the five tabs (keys 1-5 also switch them), the planned
+ * day and the settings (rooftops, day type). Long and short date forms swap by screen width (see
+ * styles.css). On a what-if day type, a banner under the row says the sunlight is a real past day's.
  */
-export default function TopBar({ tab, onTab, plan }) {
+export default function TopBar({ tab, onTab, plan, settings }) {
   const offline = plan && plan.weather.source !== "live";
   return (
     <header className="topbar">
@@ -35,7 +37,14 @@ export default function TopBar({ tab, onTab, plan }) {
           <Tag kind="REAL" />
         </p>
       )}
+      {plan && <Settings scenario={plan.scenario} {...settings} />}
       {offline && <p className="stamp" role="status">Saved forecast · {plan.weather.fetched_at.replace("T", " ")}</p>}
+      {plan?.what_if && (
+        <p className="whatif-banner" role="status">
+          <span><b>What-if: {plan.what_if.label.toLowerCase()} day</b> — real sunlight from {shortDay(plan.what_if.date)}, not a forecast</span>
+          <Tag kind="EXAMPLE" />
+        </p>
+      )}
     </header>
   );
 }

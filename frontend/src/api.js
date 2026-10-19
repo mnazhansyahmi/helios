@@ -7,9 +7,15 @@ export async function fetchAccuracy() {
   return response.json();
 }
 
-/** The plan for the next working day, for a number of scenario rooftops (omit for the server default). */
-export async function fetchPlan(rooftops, signal) {
-  const query = rooftops == null ? "" : `?rooftops=${rooftops}`;
+/**
+ * The plan for the next working day, for a number of scenario rooftops (omit for the server default)
+ * and a day type ("forecast", or a real past "sunny" / "average" / "cloudy" day's sunlight).
+ */
+export async function fetchPlan(rooftops, signal, dayType = "forecast") {
+  const params = new URLSearchParams();
+  if (rooftops != null) params.set("rooftops", rooftops);
+  if (dayType !== "forecast") params.set("day_type", dayType);
+  const query = params.size ? `?${params}` : "";
   const response = await fetch(`/api/plan${query}`, { signal });
   if (!response.ok) {
     throw new Error(`Server answered ${response.status}`);
