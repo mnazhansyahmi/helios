@@ -200,12 +200,17 @@ a 2px ink hour marker (with the hour in an ink tag at its foot) follows the hour
 Play; it moves on its own layer, so the chart is never redrawn while the day plays.
 
 ### Decision cards (For SDP tab)
-A zinc flow strip (Data → Forecast → Decision → Benefit, drawn arrows) above a 2 × 2 grid of
-hairline-divided cards. Each card: a title with its provenance tag; on the left, one big
-condensed figure with its basis in small print; on the right, behind a 1px rule, "SDP decides"
-and "Why it matters". Amber appears only in the solar-coverage bars (amber over ink hatching).
-Every figure is computed from the plan (no new models, no ringgit); a zinc footer says it is one
-day's forecast.
+Written from SDP's side ("SDP decides…"). A zinc flow strip (Data → Forecast → Decision → Benefit
+to SDP, one line each, drawn arrows) above four hairline-divided cards in one row, in this order:
+roof yield, allocation %, storage, growth. Each card reads top to bottom: the problem (bold, one
+line), its evidence as a small grey chip (a CREAM clause or target) beside the provenance tag, one
+big condensed figure with its basis in small print, then, behind a 1px rule directly under the
+figure, "SDP decides" and "Benefit to SDP" (any spare height collects at the card's foot). Amber appears only in the
+solar-coverage bars (amber over ink hatching). Under the cards, a thin reporting row (expected grid
+purchase, estimated CO₂ avoided), then a zinc footer saying it is one day's forecast with example
+sites and stand-in buyers. Every figure is computed from the plan (`tabs/sdpNumbers.js`; no new
+models, no ringgit, no invented CREAM figures). When 1024×768 is tight, shorten text first, then
+shrink type; never drop the problem or benefit lines. Stacks below 900px.
 
 ### Site plan (fallback only)
 Shown in the township's place when WebGL or the 3D models are unavailable. OpenStreetMap tiles

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchAccuracy, fetchPlan } from "./api.js";
-import TopBar, { TABS } from "./components/TopBar.jsx";
+import TopBar from "./components/TopBar.jsx";
+import { TABS, tabForKey } from "./components/tabs.js";
 import AboutTab from "./tabs/AboutTab.jsx";
 import DemandTab from "./tabs/DemandTab.jsx";
 import OverviewTab from "./tabs/OverviewTab.jsx";
@@ -50,8 +51,8 @@ export default function App() {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const el = e.target;
       if (el.isContentEditable || el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "range")) return;
-      const index = Number(e.key) - 1;
-      if (Number.isInteger(index) && index >= 0 && index < TABS.length) changeTab(TABS[index].id);
+      const id = tabForKey(e.key);
+      if (id) changeTab(id);
     };
     const onHash = () => { const id = tabFromHash(); if (id) setTab(id); };
     window.addEventListener("keydown", onKey);
