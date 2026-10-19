@@ -79,6 +79,66 @@
 .about-limits h2 { font-size: clamp(14px, 1vw, 20px); font-weight: 700; }
 .about-limits ul { font-size: clamp(12px, .82vw, 16px); gap: .25rem; margin-top: .4rem; }
 
+/* ============================================================== For SDP tab */
+/* head / flow strip (Data -> Forecast -> Decision -> Benefit) / four decision cards / footer */
+.tab-sdp { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.flow {
+  --flow-gap: clamp(36px, 3.4vw, 68px);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--flow-gap);
+  margin: 0; padding: clamp(10px, 1vw, 20px) var(--gutter); list-style: none;
+  background: var(--zinc-50); border-bottom: 1px solid var(--rule);
+}
+.flow li { position: relative; display: grid; align-content: start; gap: .15rem; }
+.flow b { font-stretch: 75%; font-weight: 800; font-size: clamp(18px, 1.4vw, 28px); line-height: 1.1; }
+.flow span { font-size: clamp(12px, .85vw, 16px); line-height: 1.35; color: var(--ink-2); }
+.flow-arrow {
+  position: absolute; top: .1em; left: calc(var(--flow-gap) / -2 - clamp(10px, .7vw, 14px));
+  width: clamp(20px, 1.4vw, 28px); height: clamp(20px, 1.4vw, 28px); color: var(--ink);
+}
+/* 2 x 2 cards; in each, the figure (left) and what SDP decides and why (right) */
+.decisions {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 1px; background: var(--rule); min-height: 0;
+}
+.decision {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "title title" "figure text"; align-items: start;
+  column-gap: clamp(20px, 2.4vw, 48px); row-gap: clamp(6px, .7vw, 14px); min-height: 0; background: var(--paper);
+  padding: clamp(12px, 1.3vw, 26px) clamp(16px, 1.8vw, 36px);
+}
+.decision:nth-child(odd) { padding-left: var(--gutter); }
+.decision:nth-child(even) { padding-right: var(--gutter); }
+.decision h2 { grid-area: title; display: flex; align-items: center; gap: .5em; font-size: clamp(15px, 1.15vw, 23px); font-weight: 700; }
+.decision-figure { grid-area: figure; display: grid; gap: clamp(6px, .6vw, 12px); }
+.decision-text { grid-area: text; display: grid; gap: clamp(8px, .8vw, 16px); padding-left: clamp(14px, 1.6vw, 32px); border-left: 1px solid var(--rule); }
+.decision-big { font-size: clamp(15px, 1.2vw, 24px); color: var(--ink-2); }
+.decision-big strong {
+  font-stretch: 75%; font-weight: 800; font-size: clamp(44px, 4.6vw, 96px); line-height: 1;
+  color: var(--ink-text); font-variant-numeric: tabular-nums; margin-right: .12em;
+}
+.shares { display: grid; grid-template-columns: repeat(3, max-content); gap: .3rem clamp(12px, 1.4vw, 28px); }
+.shares li { display: grid; }
+.shares strong { font-size: clamp(28px, 3vw, 64px); }
+.shares span { font-size: clamp(12px, .85vw, 16px); white-space: nowrap; }
+.decision-detail { font-size: clamp(12px, .85vw, 16px); line-height: 1.4; color: var(--ink-2); }
+.decision-detail b { color: var(--ink-text); font-weight: 700; }
+.sweep { display: grid; gap: .35rem; }
+.sweep li {
+  display: grid; grid-template-columns: minmax(0, 6.5em) minmax(0, 1fr) 2.6em; align-items: center; gap: .6rem;
+  font-variant-numeric: tabular-nums;
+}
+.sweep li.is-preset { color: var(--ink-text); font-weight: 700; }
+.sweep-n small { display: block; font-size: .8em; font-weight: 600; color: var(--ink-3); }
+.sweep-bar { position: relative; height: 12px; background: var(--hatch); box-shadow: inset 0 0 0 1px var(--ink); }
+.sweep-bar span { display: block; height: 100%; background: var(--sun); box-shadow: inset 0 0 0 1px var(--sun-edge); }
+.sweep-pct { text-align: right; }
+.decision-line { font-size: clamp(13px, 1vw, 20px); line-height: 1.4; color: var(--ink-2); }
+.decision-line b { color: var(--ink-text); font-weight: 700; }
+.sdp-foot {
+  padding: clamp(6px, .6vw, 12px) var(--gutter); background: var(--zinc-50); border-top: 1px solid var(--rule);
+  font-size: clamp(12px, .85vw, 16px); color: var(--ink-2);
+}
+
 /* ============================================================== Overview tab */
 /* band (day line, hour line, controls) / township + chart (60 : 40) / buyer cards */
 .tab-overview { grid-template-rows: auto minmax(0, 1fr) auto; }
@@ -214,6 +274,8 @@
   .ov-day { font-size: clamp(13px, 1.15vw, 20px); }   /* crowded? the day line shrinks first, never the hour line */
   .ov-chart { padding-top: 6px; }
   .timeline { --tl-h: 28px; }
+  .flow { padding-top: 8px; padding-bottom: 8px; }
+  .decision { padding-top: 10px; padding-bottom: 10px; }
   .page-head { padding-top: 10px; padding-bottom: 8px; }
   .page-head p { font-size: 13px; }
   .card { padding-top: 8px; }
@@ -234,8 +296,14 @@
   .ov-controls { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
 }
 
-/* Phones and narrow windows: the Overview stacks */
+/* Phones and narrow windows: the Overview and For SDP stack */
 @media (max-width: 900px) {
+  .flow, .decisions { grid-template-columns: minmax(0, 1fr); }
+  .flow { row-gap: .8rem; }
+  .flow-arrow { display: none; }
+  .decisions { grid-template-rows: none; }
+  .decision { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "figure" "text"; padding-left: var(--gutter); padding-right: var(--gutter); }
+  .decision-text { padding-left: 0; border-left: 0; }
   .ov-controls { grid-template-columns: minmax(0, 1fr); }
   .ov-main, .buyer-cards { grid-template-columns: minmax(0, 1fr); }
   .ov-stage { min-height: 360px; }

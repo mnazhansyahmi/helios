@@ -4,6 +4,7 @@ import TopBar, { TABS } from "./components/TopBar.jsx";
 import AboutTab from "./tabs/AboutTab.jsx";
 import DemandTab from "./tabs/DemandTab.jsx";
 import OverviewTab from "./tabs/OverviewTab.jsx";
+import SdpTab from "./tabs/SdpTab.jsx";
 import SolarTab from "./tabs/SolarTab.jsx";
 
 const tabFromHash = () => {
@@ -39,7 +40,7 @@ export default function App() {
     if (plan && !ready && rooftops !== null && plan.scenario.rooftops === rooftops) setReady(true);
   }, [plan, rooftops, ready]);
 
-  // Tabs: click, keys 1-4 (for the live pitch), and the address bar (#solar) so a refresh keeps the tab.
+  // Tabs: click, keys 1-5 (for the live pitch), and the address bar (#solar) so a refresh keeps the tab.
   const changeTab = useCallback((id) => {
     setTab(id);
     window.history.replaceState(null, "", `#${id}`);
@@ -82,6 +83,7 @@ export default function App() {
     <div className="app">
       <TopBar tab={tab} onTab={changeTab} plan={plan} />
       {tab === "overview" && <OverviewTab plan={plan} rooftops={shownRooftops} onRooftops={setRooftops} error={error} />}
+      {tab === "sdp" && <SdpTab plan={plan} />}
       {tab === "solar" && <SolarTab plan={plan} accuracy={accuracy} />}
       {tab === "demand" && <DemandTab plan={plan} accuracy={accuracy} />}
       {tab === "about" && <AboutTab plan={plan} />}

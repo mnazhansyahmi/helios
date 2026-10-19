@@ -23,7 +23,7 @@ function Bars({ title, note, rows, format }) {
   );
 }
 
-/** Tab 2, "Solar": the planned day's output for one roof of each example type, and how accurate it is. */
+/** Tab 3, "Solar": the planned day's output for one roof of each example type, and how accurate it is. */
 export default function SolarTab({ plan, accuracy }) {
   const day = weekdayName(plan.day);
   const max = Math.max(...plan.rooftops.flatMap((r) => r.hourly_kwh_one_roof), 0.01);

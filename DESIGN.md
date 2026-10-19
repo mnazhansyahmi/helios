@@ -141,7 +141,7 @@ for reading, so the page stays one voice.
 
 ## Layout
 
-Four tabs (keys 1–4): Overview, Solar, Demand, About the data. Every tab fits one screen with no
+Five tabs (keys 1–5): Overview, For SDP, Solar, Demand, About the data. Every tab fits one screen with no
 scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768. The Overview tells the whole story:
 an ink band (the day line, the hour line, then one row of controls: Play, the hour slider, the
 rooftop slider, the noon-match preset), then the 3D township (left, 3 : 2) beside the 24-hour
@@ -198,6 +198,14 @@ as the slider moves. Data changes tween over 450ms with an exponential ease-out,
 land on the true numbers. A hidden table repeats the data for screen readers. On the Overview
 a 2px ink hour marker (with the hour in an ink tag at its foot) follows the hour slider and
 Play; it moves on its own layer, so the chart is never redrawn while the day plays.
+
+### Decision cards (For SDP tab)
+A zinc flow strip (Data → Forecast → Decision → Benefit, drawn arrows) above a 2 × 2 grid of
+hairline-divided cards. Each card: a title with its provenance tag; on the left, one big
+condensed figure with its basis in small print; on the right, behind a 1px rule, "SDP decides"
+and "Why it matters". Amber appears only in the solar-coverage bars (amber over ink hatching).
+Every figure is computed from the plan (no new models, no ringgit); a zinc footer says it is one
+day's forecast.
 
 ### Site plan (fallback only)
 Shown in the township's place when WebGL or the 3D models are unavailable. OpenStreetMap tiles

@@ -2,7 +2,7 @@ import MiniCurve from "../components/MiniCurve.jsx";
 import Tag from "../components/Tag.jsx";
 import { hourName, kwh, number, weekdayName } from "../format.js";
 
-/** Tab 3, "Demand": the planned day's demand for each buyer building, and how accurate the model is. */
+/** Tab 4, "Demand": the planned day's demand for each buyer building, and how accurate the model is. */
 export default function DemandTab({ plan, accuracy }) {
   const day = weekdayName(plan.day);
   const series = plan.buyers.map((b) => ({ ...b, values: plan.hours.map((h) => h.buyers[b.id].demand_kwh) }));
