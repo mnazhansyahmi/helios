@@ -681,9 +681,7 @@ export default function Township({ plan, t, hour, onFail }) {
         return (
         <div key={l.id} ref={(el) => { labelRefs.current[l.id] = el; }} className="township-label"
              style={spot ? { left: spot.box.l, top: spot.box.t } : { left: 0, top: 0, visibility: "hidden" }}>
-          <p className="label-name">{l.name} <small>{l.pct}% from solar</small></p>
-          <p>needs <b>{number(l.needs)}</b> kWh</p>
-          <p><i className="key key-sun" />solar <b>{number(l.solar)}</b> <i className="key key-hatch" />grid <b>{number(l.grid)}</b></p>
+          <p><span className="label-name">{l.name}</span> · <b className="label-pct">{l.pct}%</b> solar</p>
         </div>
         );
       })}
@@ -691,8 +689,7 @@ export default function Township({ plan, t, hour, onFail }) {
         <span className="township-ring" ref={ringRef} style={{ left: `${ringTag.x * 100}%`, top: `${ringTag.y * 100}%` }}>5 km CREAM limit · not to scale</span>
       )}
       <p className="township-key" ref={keyRef}>
-        <span><i className="key key-sun" />Roof panels shine with each hour's solar</span>
-        <span><i className="key key-sun" /><i className="key key-hatch" />Bar beside each buyer: amber = share from solar, hatched = expected grid purchase</span>
+        <span><i className="key key-sun" />Amber = solar · <i className="key key-hatch" />hatched = grid</span>
         {/* on phones the floating labels would overlap, so the shares are listed here instead */}
         <span className="township-shares">
           {labels.map((l) => `${l.name}: needs ${number(l.needs)}, solar ${number(l.solar)}, grid ${number(l.grid)} kWh`).join(" · ")}

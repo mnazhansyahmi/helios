@@ -44,7 +44,7 @@ export default function SolarTab({ plan, accuracy }) {
         <section className="card-grid card-grid-4x2" aria-label="Solar per example rooftop">
           {plan.rooftops.map((r) => (
             <article className="card" key={r.id}>
-              <h2>{r.id} · {r.kwp} kWp, {COMPASS[r.azimuth] ?? `${r.azimuth}°`}-facing</h2>
+              <h2 className="card-title-line">{r.id} · {r.kwp} kWp · {COMPASS[r.azimuth] ?? `${r.azimuth}°`}</h2>
               <p className="card-total"><strong>{r.kwh_one_roof.toFixed(1)}</strong> kWh for the day</p>
               <MiniCurve values={r.hourly_kwh_one_roof} max={max} from={5} to={20} tone="sun"
                          label={`${r.id}: ${r.kwh_one_roof.toFixed(1)} kWh for the day`} />

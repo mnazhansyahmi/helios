@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchPlan } from "../api.js";
 import Tag from "../components/Tag.jsx";
 import { energy, hourName, number, weekdayName } from "../format.js";
-import { allocationShares, growthCounts, roofKind, roofYields, storage } from "./sdpNumbers.js";
+import { allocationShares, growthBenefit, growthCounts, roofBenefit, roofKind, roofYields, storage } from "./sdpNumbers.js";
 
 const twoDecimals = (n) => n.toFixed(2);
 
@@ -71,8 +71,8 @@ export default function SdpTab({ plan }) {
         <DecisionCard
           problem="Solar output changes with weather and roof direction."
           evidence="General" tag="EXAMPLE"
-          decides="which roof types to sign first."
-          benefit="know which roof types give the most solar."
+          decides="which roofs to accept."
+          benefit={roofBenefit(roofs.gapPct)}
         >
           <ul className="figure-rows" aria-label="kWh per kWp for one roof, best and worst example type">
             {[["Best", roofs.best], ["Worst", roofs.worst]].map(([label, r]) => (
@@ -102,8 +102,8 @@ export default function SdpTab({ plan }) {
         <DecisionCard
           problem="Solar stops at sunset."
           evidence="TNB is the fallback supplier (cl. 6.10); community storage (cl. 9.13)" tag="STAND-IN"
-          decides="whether and when to plan community storage."
-          benefit="avoids planning storage before there is surplus to store."
+          decides="how much land to set aside for community storage (cl. 9.13; TNB installs it, cl. 10.1(c))."
+          benefit="knows when surplus makes storage worth discussing with TNB."
         >
           <p className="decision-big"><strong>{storeValue}</strong>{storeUnit} storable</p>
           <p className="decision-detail">
@@ -116,9 +116,9 @@ export default function SdpTab({ plan }) {
 
         <DecisionCard
           problem="Growing to 20 MW: which roofs next?"
-          evidence="SDP–GSPARX target: 20 MW in 5 years" tag="EXAMPLE"
+          evidence="SDP–GSPARX JV target: 20 MW in 5 years (all assets, not only CREAM)" tag="EXAMPLE"
           decides="how many roofs to add before adding buyers."
-          benefit="growth planned with numbers, not guesses."
+          benefit={growthBenefit(counts, sweep)}
         >
           <ul className="sweep" aria-label="Share of the day's buyer demand met by solar">
             {counts.map((n) => {

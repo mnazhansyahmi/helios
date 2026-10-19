@@ -23,16 +23,18 @@
 .card-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .card {
   display: flex; flex-direction: column; min-height: 0; background: var(--paper);
-  padding: clamp(10px, 1vw, 20px) clamp(12px, 1.2vw, 24px) clamp(6px, .6vw, 12px);
+  padding: clamp(10px, 1vw, 20px) clamp(12px, 1.2vw, 24px) clamp(10px, 1.2vw, 24px);
 }
 .card:first-child, .card-grid-4x2 .card:nth-child(5) { padding-left: var(--gutter); }
 .card h2 { font-size: clamp(14px, 1vw, 20px); font-weight: 700; }
+.card h2.card-title-line { font-size: clamp(13px, 1vw, 20px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-total { font-size: clamp(12px, .85vw, 16px); color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .card-total strong { font-stretch: 75%; font-weight: 800; font-size: 1.6em; color: var(--ink-text); }
 .card-note { font-size: clamp(11px, .78vw, 15px); color: var(--ink-3); }
 
 .mini { flex: 1; display: flex; flex-direction: column; min-height: 50px; margin-top: .4rem; }
-.mini-svg { flex: 1; width: 100%; min-height: 0; overflow: visible; }
+/* height 0 + flex: the curve fills what the card has left, instead of taking its height from its width */
+.mini-svg { flex: 1 1 0; width: 100%; height: 0; min-height: 0; overflow: visible; }
 .mini-area-sun { fill: var(--sun); }
 .mini-line-sun { fill: none; stroke: var(--sun-edge); stroke-width: 1.5px; }
 .mini-area-ink { fill: #e3e6e9; }
@@ -102,8 +104,8 @@
 }
 .decision {
   display: grid; grid-template-rows: auto auto auto auto; align-content: start;
-  row-gap: clamp(6px, .7vw, 14px); min-height: 0; overflow: hidden; background: var(--paper);
-  padding: clamp(12px, 1.3vw, 26px) clamp(12px, 1.4vw, 28px);
+  row-gap: clamp(6px, min(.7vw, 1.2vh), 14px); min-height: 0; overflow: hidden; background: var(--paper);
+  padding: clamp(12px, min(1.3vw, 2vh), 26px) clamp(12px, 1.4vw, 28px);
 }
 .decision:first-child { padding-left: var(--gutter); }
 .decision:last-child { padding-right: var(--gutter); }
@@ -114,7 +116,7 @@
   font-size: clamp(11px, .72vw, 14px); line-height: 1.3;
 }
 .decision-figure { display: grid; align-content: start; gap: clamp(6px, .6vw, 12px); }
-.decision-text { display: grid; gap: clamp(6px, .6vw, 12px); padding-top: clamp(8px, .8vw, 16px); border-top: 1px solid var(--rule); }
+.decision-text { display: grid; gap: clamp(6px, min(.6vw, 1vh), 12px); padding-top: clamp(8px, min(.8vw, 1.4vh), 16px); border-top: 1px solid var(--rule); }
 .decision-big { font-size: clamp(14px, 1.05vw, 21px); color: var(--ink-2); }
 .decision-big strong, .figure-rows strong {
   font-stretch: 75%; font-weight: 800; line-height: 1;
@@ -138,7 +140,7 @@
 .sweep-bar { position: relative; height: clamp(12px, 1.8vh, 22px); background: var(--hatch); box-shadow: inset 0 0 0 1px var(--ink); }
 .sweep-bar span { display: block; height: 100%; background: var(--sun); box-shadow: inset 0 0 0 1px var(--sun-edge); }
 .sweep-pct { text-align: right; font-stretch: 75%; font-weight: 800; font-size: 1.6em; }
-.decision-line { font-size: clamp(13px, .95vw, 19px); line-height: 1.35; color: var(--ink-2); }
+.decision-line { font-size: clamp(13px, min(.95vw, 1.75vh), 19px); line-height: 1.35; color: var(--ink-2); }
 .decision-line b { color: var(--ink-text); font-weight: 700; }
 /* thin reporting row, then the footer */
 .sdp-report {
@@ -154,12 +156,19 @@
 
 /* ============================================================== Overview tab */
 /* band (day line, hour line, controls) / township + chart (60 : 40) / buyer cards */
-.tab-overview { grid-template-rows: auto minmax(0, 1fr) auto; }
+.tab-overview {
+  grid-template-rows: auto minmax(0, 1fr) auto; row-gap: clamp(10px, 1.3vw, 26px); background: var(--zinc-50);
+}
 .band-overview {
   grid-template-columns: minmax(0, 1fr); grid-template-areas: none;
   padding-top: clamp(8px, .8vw, 16px); padding-bottom: clamp(10px, 1vw, 20px); gap: clamp(4px, .5vw, 10px);
 }
-.ov-day { font-size: clamp(15px, 1.4vw, 29px); font-weight: 500; line-height: 1.25; color: var(--band-text-2); }
+/* the day line: small, grey, one line (the hour line below is the only headline) */
+.ov-day {
+  font-size: clamp(12px, .95vw, 19px); font-weight: 500; line-height: 1.3; color: var(--band-text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ov-day .figure { color: inherit; font-weight: 700; }
 .ov-line { font-stretch: 75%; font-weight: 800; font-size: clamp(30px, 3.5vw, 74px); line-height: 1.02; letter-spacing: -0.012em; }
 .ov-line .figure-sun { color: var(--sun); }
 /* Two groups of controls: "The day" (Play + timeline, the most width) and the bordered "Scenario" box */
@@ -212,7 +221,7 @@
 .preset-compact .preset-action { font-size: clamp(17px, 1.3vw, 26px); }
 .preset-compact .preset-detail { font-size: clamp(12px, .8vw, 16px); }
 
-.ov-main { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); min-height: 0; border-bottom: 1px solid var(--rule); }
+.ov-main { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); min-height: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .ov-stage { position: relative; display: flex; flex-direction: column; min-height: 0; background: #e9ecee; }
 .ov-stage .site-map { flex: 1; min-height: 0; }
 .ov-label {
@@ -237,9 +246,10 @@
   background: var(--ink); color: var(--paper); font-size: clamp(11px, .78vw, 15px); font-weight: 700;
 }
 
-.buyer-cards { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1.05fr); background: var(--zinc-50); }
+/* the three buyer cards, then the one-line pointer to the About tab under them, full width */
+.buyer-cards { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--zinc-50); border-top: 1px solid var(--rule); }
 .tags-note {
-  align-self: center; padding: clamp(6px, .6vw, 12px) var(--gutter) clamp(6px, .6vw, 12px) clamp(14px, 1.4vw, 28px);
+  padding: clamp(5px, .5vw, 10px) var(--gutter); border-top: 1px solid var(--rule);
   font-size: clamp(11px, .72vw, 14px); line-height: 1.4; color: var(--ink-3);
 }
 .tags-note b { color: var(--ink-2); font-weight: 700; letter-spacing: .04em; }
@@ -253,15 +263,15 @@
 .township-leaders circle { fill: var(--ink); stroke: var(--paper); stroke-width: 1.5px; }
 .township-label {
   position: absolute; white-space: nowrap; pointer-events: none;
-  min-width: 12.5em;   /* the same width every hour, so labels do not shift as the numbers change */
-  padding: 5px 12px 6px; background: var(--paper); border: 1px solid var(--ink);
+  padding: 4px 12px 5px; background: var(--paper); border: 1px solid var(--ink);
   font-size: clamp(13px, .95vw, 19px); line-height: 1.3; color: var(--ink-2); font-variant-numeric: tabular-nums;
 }
 .township-label .label-name { font-weight: 700; color: var(--ink-text); }
-.township-label .label-name small { margin-left: .4em; font-size: .8em; font-weight: 500; color: var(--ink-3); }
-.township-label b { font-stretch: 75%; font-weight: 800; font-size: 1.25em; color: var(--ink-text); }
-.township-label .key { width: .9em; height: .7em; margin-right: .3em; }
-.township-label .key-hatch { margin-left: .6em; }
+/* the % sits in a fixed-width slot, so a label keeps its size (and its spot) as the hours play */
+.township-label .label-pct {
+  display: inline-block; min-width: 2.4em; text-align: right;
+  font-stretch: 75%; font-weight: 800; font-size: 1.2em; color: var(--ink-text);
+}
 .township-ring {
   position: absolute; transform: translate(-50%, 6px); white-space: nowrap; pointer-events: none;
   padding: 1px 8px; background: rgba(255, 255, 255, .9); border: 1px solid var(--rule);
@@ -269,7 +279,7 @@
 }
 .township-key {
   position: absolute; left: var(--gutter); bottom: 10px; display: flex; flex-direction: column; gap: .2rem;
-  max-width: min(32vw, 360px); padding: 5px 10px; background: rgba(255, 255, 255, .94); border: 1px solid var(--rule);
+  max-width: min(40vw, 360px); padding: 5px 10px; white-space: nowrap; background: rgba(255, 255, 255, .94); border: 1px solid var(--rule);
   font-size: clamp(12px, .8vw, 15px); line-height: 1.35; color: var(--ink-2);
 }
 .township-key .key + .key { margin-left: -.25em; }
@@ -277,14 +287,14 @@
 @media (max-width: 900px) {
   .township-label, .township-leaders { display: none; }
   .township-shares { display: inline; }
-  .township-key { max-width: none; right: var(--gutter); }
+  .township-key { max-width: none; right: var(--gutter); white-space: normal; }
 }
 
 /* Short screens (e.g. 1280x720): tighten the new tabs so each still fits without scrolling */
 @media (min-width: 901px) and (max-height: 820px) {
   .topbar { padding-top: 5px; padding-bottom: 0; }
   .band-overview { padding-top: 4px; padding-bottom: 10px; gap: 2px; }
-  .ov-day { font-size: clamp(13px, 1.15vw, 20px); }   /* crowded? the day line shrinks first, never the hour line */
+  .ov-day { font-size: clamp(12px, .9vw, 16px); }   /* crowded? the day line shrinks first, never the hour line */
   .ov-chart { padding-top: 6px; }
   .timeline { --tl-h: 28px; }
   .flow { padding-top: 8px; padding-bottom: 8px; }
@@ -298,10 +308,8 @@
   .about-col ul { font-size: 14px; gap: .3rem; }
 }
 
-/* Narrower screens: the note beside the buyer cards gets a wider column, so it wraps into fewer lines,
-   and the scenario label puts "not a CREAM figure" on its own line under the rooftop count */
+/* Narrower screens: the scenario label puts "not a CREAM figure" on its own line under the rooftop count */
 @media (min-width: 901px) and (max-width: 1400px) {
-  .buyer-cards { grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr); }
   .ov-rooftops-note { flex-basis: 100%; }
   .ov-rooftops-sep { display: none; }
 }

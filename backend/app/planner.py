@@ -105,7 +105,7 @@ def accuracy_for_dashboard(accuracy: dict, lead_days: int) -> dict:
         pct = round(100 * (1 - model["mae_kwh"] / simple["mae_kwh"]))
         baseline = {"last_week": "‘same hour last week’",
                     "hour_of_week_average": "‘average for that hour of the week’"}.get(d["simple_guess"], "a simple guess")
-        sentence = f"Demand forecast: {pct}% lower MAE than {baseline} on unseen months (Florida stand-in buildings)."
+        sentence = f"Demand forecast: {pct}% lower average error than {baseline} on unseen months (Florida stand-in buildings)."
         out["demand"] = {"sentence": sentence, "detail": d["detail"],
                          "small_print": (f"Average error {model['mae_kwh']:.0f} vs {simple['mae_kwh']:.0f} kWh per "
                                          f"building per hour. Held-out {_months(d['test_period'])}, Florida stand-in "

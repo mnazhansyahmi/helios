@@ -55,6 +55,14 @@ export function storage(plan) {
   return { storable, evening, fromHour: first < 0 ? null : last + 1, aboutZero: storable < 0.01 * evening };
 }
 
+/** 1. Card 1's benefit line: when the example roofs are under 10% apart, say direction hardly matters. */
+export function roofBenefit(gapPct) {
+  const apart = Math.round(gapPct);
+  return gapPct < 10
+    ? `direction matters little here (${apart}% apart) — don't turn roofs away for facing west or north.`
+    : "know which roof types give the most solar.";
+}
+
 const nearest10 = (n) => Math.round(n / 10) * 10;
 
 /** 4. Three roof counts inside the slider range: half the noon match, the noon match, twice it (clamped). */
@@ -65,4 +73,17 @@ export function growthCounts(scenario) {
     ? [nearest10(max / 4), nearest10(max / 2), max]
     : [clamp(nearest10(noon / 2)), noon, clamp(nearest10(noon * 2))];
   return [...new Set(picks)].sort((a, b) => a - b);
+}
+
+/**
+ * 4. Card 4's benefit line, from its own middle and high counts and their coverage % (null until loaded).
+ * The high count is twice the middle one (rounded to 10) unless the slider's maximum clamps it.
+ */
+export function growthBenefit(counts, coverage) {
+  const [, mid, high] = counts;
+  if (high == null || coverage[mid] == null || coverage[high] == null) return "growth planned with numbers, not guesses.";
+  const points = Math.round(coverage[high]) - Math.round(coverage[mid]);
+  const step = Math.abs(high - 2 * mid) <= 5 ? "doubling roofs" : "adding roofs";
+  return `${step} (${mid.toLocaleString("en-MY")} → ${high.toLocaleString("en-MY")}) adds only ${points} points of coverage — `
+    + "beyond the noon match, add daytime buyers or storage, not just roofs.";
 }

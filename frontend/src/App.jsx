@@ -87,7 +87,7 @@ export default function App() {
       {tab === "sdp" && <SdpTab plan={plan} />}
       {tab === "solar" && <SolarTab plan={plan} accuracy={accuracy} />}
       {tab === "demand" && <DemandTab plan={plan} accuracy={accuracy} />}
-      {tab === "about" && <AboutTab plan={plan} />}
+      {tab === "about" && <AboutTab plan={plan} accuracy={accuracy} />}
     </div>
   );
 }

@@ -8,7 +8,6 @@ export default function DemandTab({ plan, accuracy }) {
   const series = plan.buyers.map((b) => ({ ...b, values: plan.hours.map((h) => h.buyers[b.id].demand_kwh) }));
   const max = Math.max(...series.flatMap((s) => s.values), 1);
   const d = accuracy?.demand;
-  const irma = d?.sensitivity_hurricane_irma?.irma_week_only;
   const meter = d?.methods?.model_with_meter_data;
 
   return (
@@ -27,7 +26,7 @@ export default function DemandTab({ plan, accuracy }) {
               <h2>{s.name}</h2>
               <p className="card-total"><strong>{number(s.demand_kwh)}</strong> kWh for the day · peaks at {hourName(s.peak_hour)}</p>
               <p className="card-note">{s.note}</p>
-              <MiniCurve values={s.values} max={max} from={0} to={23} tone="ink" ticks={[0, 6, 12, 18]}
+              <MiniCurve values={s.values} max={max} from={0} to={23} tone="ink" ticks={[6, 12, 18]}
                          label={`${s.name}: ${number(s.demand_kwh)} kWh for the day`} />
             </article>
           ))}
@@ -57,10 +56,6 @@ export default function DemandTab({ plan, accuracy }) {
           <ul className="caveats">
             <li>Stand-ins: real Florida buildings; Elmina usage habits (e.g. Hari Raya) will differ.</li>
             <li>Tested with measured temperatures; a real temperature forecast adds some error.</li>
-            {irma && (
-              <li>Hurricane Irma week (Sep 2017): {irma.model.mae_kwh.toFixed(0)} kWh error vs {irma.hour_of_week_average.mae_kwh.toFixed(0)} for
-                the plain average. The model cannot know about closures.</li>
-            )}
             {meter && (
               <li>Adding recent meter readings cut error {Math.round(100 * (1 - meter.mae_kwh / d.methods.model.mae_kwh))}% in our
                 Florida test ({d.methods.model.mae_kwh.toFixed(0)} to {meter.mae_kwh.toFixed(0)} kWh); the demo does not use meter readings.</li>

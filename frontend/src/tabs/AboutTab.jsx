@@ -1,8 +1,9 @@
 import Tag from "../components/Tag.jsx";
 
 /** Tab 5, "About the data": what is real, what is made up, what stands in, and where it comes from. */
-export default function AboutTab({ plan }) {
+export default function AboutTab({ plan, accuracy }) {
   const km = plan.match_distance_km;
+  const irma = accuracy?.demand?.sensitivity_hurricane_irma?.irma_week_only;
   return (
     <div className="tab tab-page" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
       <header className="page-head">
@@ -48,6 +49,10 @@ export default function AboutTab({ plan }) {
                 declared allocation % (EC guideline cl. 9.10, 6.11). Electricity flows through TNB's grid.</li>
               <li>CO<sub>2</sub> avoided is estimated with the {plan.carbon_factor.kg_per_kwh.toFixed(3)} kg/kWh grid factor
                 (EC 2024 provisional), for planning only; it is not a figure for any buyer's ESG reporting.</li>
+              {irma && (
+                <li>Hurricane Irma week (Sep 2017): {irma.model.mae_kwh.toFixed(0)} kWh demand error vs {irma.hour_of_week_average.mae_kwh.toFixed(0)} for
+                  the plain average. The model cannot know about closures.</li>
+              )}
               <li>Open-Meteo's free tier is non-commercial; a real deployment needs a commercial weather licence.</li>
             </ul>
           </div>

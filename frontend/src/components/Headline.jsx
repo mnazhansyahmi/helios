@@ -37,8 +37,8 @@ function useCountUp(target, durationMs = 450) {
 }
 
 /**
- * The whole planned day in one sentence, above the Overview's big hour line. The solar share is
- * amber (the solar colour); the grid and CO2 figures stay white.
+ * The whole planned day in one sentence, above the Overview's big hour line: small, grey and on one
+ * line, so the hour line stays the only headline.
  */
 function Headline({ plan }) {
   const { totals, scenario } = plan;
@@ -55,7 +55,7 @@ function Headline({ plan }) {
   return (
     <h1 className="ov-day">
       With {scenario.rooftops.toLocaleString("en-MY")} rooftops, solar covers{" "}
-      <span className="figure figure-sun">{Math.round(coverage)}%</span> of {day}'s buyer demand
+      <span className="figure">{Math.round(coverage)}%</span> of {day}'s buyer demand
       <span className="sep" aria-hidden="true"> · </span>
       <span className="figure">{energy(totals.grid_topup_kwh)}</span> expected grid purchase
       <span className="sep" aria-hidden="true"> · </span>

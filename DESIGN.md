@@ -143,9 +143,10 @@ for reading, so the page stays one voice.
 
 Five tabs (keys 1–5): Overview, For SDP, Solar, Demand, About the data. Every tab fits one screen with no
 scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768. The Overview tells the whole story:
-an ink band (the day line, the hour line, then one row of controls: Play, the hour slider, the
+an ink band (the day line, small, grey and on one line; the hour line, the only headline; then one row of controls: Play, the hour slider, the
 rooftop slider, the noon-match preset), then the 3D township (left, 3 : 2) beside the 24-hour
-chart (right), then the buyer cards (three buyers plus a note on Helios and the tags). When a
+chart (right), then the buyer cards (three buyers, with one line under them pointing to About the data for the
+tags). Clear space (clamp(10px, 1.3vw, 26px)) separates the band, the township/chart row and the cards. When a
 screen is crowded the day line shrinks first; the hour line and the chart never do. Screens
 820px tall or less use a short mode: tighter band and strips, a smaller slider. Accuracy lives on
 the Solar and Demand tabs; the 2D site plan only appears when the township cannot be drawn.
@@ -239,10 +240,10 @@ ink frame (the frame's height = 100% of that hour's need): unlit true amber from
 the share met by solar (with a soft amber pool of light at its foot, scaled by that share),
 unlit ink hatching above for the grid, so both read at dawn and dusk. The sky behind is a CSS
 gradient that runs from dawn to dusk in cool blues only; the sun moves east to west and casts
-shadows. Labels on paper with an ink hairline sit as close to their bar as they can without
+shadows. One-line labels ("Office B · 100% solar"; the kWh are in the buyer cards) on paper with an ink hairline sit as close to their bar as they can without
 covering the plaza (right, left, above or below its top, never over another bar, label or tag,
 and never with a leader crossing one; the middle bar's label is placed first), joined by a short
-1px ink leader ending in a dot; the key stacks at the bottom left. On phones the kWh move into
+1px ink leader ending in a dot; a one-line key ("Amber = solar · hatched = grid") sits at the bottom left. On phones the kWh move into
 the key. Drawn only when the hour or size changes; falls back to
 the 2D site plan without WebGL or if the models fail to load. Always tagged EXAMPLE.
 

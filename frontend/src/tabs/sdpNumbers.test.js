@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { TABS, tabForKey } from "../components/tabs.js";
-import { allocationShares, growthCounts, percentages, roofKind, roofYields, storage } from "./sdpNumbers.js";
+import { allocationShares, growthBenefit, growthCounts, percentages, roofBenefit, roofKind, roofYields, storage } from "./sdpNumbers.js";
 
 // A tiny plan: sun from 08:00 to 17:59, two roof types, two buyers.
 const sunny = (kwh) => Array.from({ length: 24 }, (_, h) => (h >= 8 && h <= 17 ? kwh : 0));
@@ -57,4 +57,18 @@ test("growth counts sit inside the slider range around the noon match", () => {
   assert.deepEqual(growthCounts({ min: 0, max: 1000, preset_noon_match: 337 }), [170, 337, 670]);
   assert.deepEqual(growthCounts({ min: 0, max: 1000, preset_noon_match: 800 }), [400, 800, 1000]);
   assert.deepEqual(growthCounts({ min: 0, max: 1000, preset_noon_match: null }), [250, 500, 1000]);
+});
+
+test("card 1 benefit says direction matters little when roofs are under 10% apart", () => {
+  assert.equal(roofBenefit(4.6), "direction matters little here (5% apart) — don't turn roofs away for facing west or north.");
+  assert.equal(roofBenefit(10), "know which roof types give the most solar.");
+  assert.equal(roofBenefit(100 / 6), "know which roof types give the most solar.");
+});
+
+test("card 4 benefit uses its own middle and high counts and their coverage", () => {
+  assert.equal(growthBenefit([170, 337, 670], { 170: 19.5, 337: 38.7, 670: 48.9 }),
+    "doubling roofs (337 → 670) adds only 10 points of coverage — beyond the noon match, add daytime buyers or storage, not just roofs.");
+  assert.match(growthBenefit([150, 300, 600], { 150: 20, 300: 40, 600: 49 }), /^doubling roofs \(300 → 600\) adds only 9 points/);
+  assert.match(growthBenefit([400, 800, 1000], { 400: 40, 800: 50, 1000: 52 }), /^adding roofs \(800 → 1,000\) adds only 2 points/);
+  assert.equal(growthBenefit([150, 300, 600], {}), "growth planned with numbers, not guesses.");
 });

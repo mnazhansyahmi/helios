@@ -4,7 +4,7 @@ import { kwh, number, weekdayName } from "../format.js";
 
 /**
  * The Overview's bottom strip: each buyer building over the whole planned day (share from solar,
- * and needs / solar / grid in kWh), then one note on what Helios is and what the tags mean.
+ * and needs / solar / grid in kWh), then a one-line pointer to the About tab, which explains the tags.
  */
 function BuyerCards({ plan }) {
   // One kWh scale for every buyer bar, so their sizes compare directly.
@@ -29,13 +29,7 @@ function BuyerCards({ plan }) {
           </article>
         ))}
       </section>
-      <p className="tags-note">
-        Planning prototype for CREAM, City of Elmina. Helios plans; TNB runs the grid. The hourly split is a
-        planning estimate; CREAM bills monthly using each buyer's declared allocation % (EC guideline cl. 9.10,
-        6.11). CO<sub>2</sub> avoided is estimated: {plan.carbon_factor.kg_per_kwh.toFixed(3)} kg/kWh grid factor
-        (EC 2024 provisional). <b>REAL</b> public data · <b>EXAMPLE</b> made up for this demo · <b>STAND-IN</b> real
-        Florida buildings standing in for Elmina's.
-      </p>
+      <p className="tags-note">Planning estimate · <b>REAL</b> / <b>EXAMPLE</b> / <b>STAND-IN</b> explained in About the data</p>
     </footer>
   );
 }
