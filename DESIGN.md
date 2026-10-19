@@ -1,5 +1,5 @@
 ---
-name: Helios
+name: I-SOLAR
 description: Tomorrow's rooftop-solar plan for CREAM, City of Elmina, set like a development-site hoarding
 colors:
   hoarding-ink: "#13212e"
@@ -65,13 +65,13 @@ components:
     padding: "0.05em 0.45em"
 ---
 
-# Design System: Helios
+# Design System: I-SOLAR
 
 ## Overview
 
 **Creative North Star: "The Development Hoarding"**
 
-Helios is set like the signboard around a Malaysian development site: built to be read from
+I-SOLAR is set like the signboard around a Malaysian development site: built to be read from
 the road, which here means from the back of a lit room on a projector. A night-ink vinyl band
 carries the day in one sentence, the chosen hour in one giant line, and the presenter's controls;
 below, the hoarding's artist's impression (a 3D example township) stands beside the 24-hour
@@ -80,7 +80,7 @@ and nothing decorates it.
 
 Density is deliberately low at the top and rises toward the bottom: the band is for reading in
 two seconds, the buyer cards for anyone who walks up close. Rejected on purpose, at the
-user's request: the generic SaaS card grid, small dense text, anything implying Helios controls
+user's request: the generic SaaS card grid, small dense text, anything implying I-SOLAR controls
 the grid, and green-washing imagery.
 
 **Key Characteristics:**
@@ -258,7 +258,7 @@ the 2D site plan without WebGL or if the models fail to load. Always tagged EXAM
 
 ### Don't:
 - **Don't** add KPI tile grids, cards or shadows. This is a hoarding, not a SaaS admin page.
-- **Don't** use wording or visuals that imply Helios dispatches or balances power. TNB runs the grid.
+- **Don't** use wording or visuals that imply I-SOLAR dispatches or balances power. TNB runs the grid.
 - **Don't** add leaves, globes or glowing eco imagery.
 - **Don't** put small labels above headings; headings carry their own weight.
 - **Don't** use SDP's logo or brand colours.

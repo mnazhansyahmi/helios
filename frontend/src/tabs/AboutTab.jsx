@@ -8,7 +8,7 @@ export default function AboutTab({ plan, accuracy }) {
     <div className="tab tab-page" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
       <header className="page-head">
         <h1>About the data</h1>
-        <p>Planning prototype for CREAM, City of Elmina. Helios plans; TNB runs the grid. Every figure on screen carries one of three tags.</p>
+        <p>Planning prototype for CREAM, City of Elmina. I-SOLAR plans; TNB runs the grid. Every figure on screen carries one of three tags.</p>
       </header>
       <div className="about-body">
         <section className="about-cols" aria-label="Data labels">

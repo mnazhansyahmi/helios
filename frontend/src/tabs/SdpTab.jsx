@@ -57,7 +57,7 @@ export default function SdpTab({ plan }) {
     <div className="tab tab-page tab-sdp" id="panel-sdp" role="tabpanel" aria-labelledby="tab-sdp">
       <header className="page-head">
         <h1>For SDP: four decisions as the CREAM LEGA</h1>
-        <p>From {day}'s forecast plan. Helios suggests; SDP decides; TNB runs the grid.</p>
+        <p>From {day}'s forecast plan. I-SOLAR suggests; SDP decides; TNB runs the grid.</p>
       </header>
 
       <ol className="flow" aria-label="From data to benefit">

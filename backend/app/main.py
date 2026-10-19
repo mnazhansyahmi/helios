@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import config, planner, reports
 
-app = FastAPI(title="Helios API", description="Solar and demand planning prototype for CREAM, City of Elmina")
+app = FastAPI(title="I-SOLAR API", description="Solar and demand planning prototype for CREAM, City of Elmina")
 
 
 @app.get("/api/plan")
@@ -46,6 +46,6 @@ if DASHBOARD_DIR.exists():
 else:
     @app.get("/", response_class=HTMLResponse)
     def no_dashboard_yet():
-        return ("<h1>Helios API is running</h1><p>The dashboard is not built yet "
+        return ("<h1>I-SOLAR API is running</h1><p>The dashboard is not built yet "
                 "(run <code>npm run build</code> in <code>frontend/</code>). "
                 "Try <a href='/api/plan'>/api/plan</a> or <a href='/docs'>/docs</a>.</p>")

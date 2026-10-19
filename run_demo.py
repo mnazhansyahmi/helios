@@ -46,7 +46,7 @@ def main() -> None:
 
     import uvicorn
     url = f"http://127.0.0.1:{args.port}"
-    print(f"Helios is starting at {url}  (press Ctrl+C to stop)")
+    print(f"I-SOLAR is starting at {url}  (press Ctrl+C to stop)")
     if not args.no_browser:
         threading.Timer(2.0, lambda: webbrowser.open(url)).start()
     uvicorn.run("app.main:app", app_dir=str(ROOT / "backend"), host="127.0.0.1", port=args.port)

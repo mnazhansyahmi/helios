@@ -12,8 +12,8 @@ export default function TopBar({ tab, onTab, plan }) {
   const offline = plan && plan.weather.source !== "live";
   return (
     <header className="topbar">
-      <p className="wordmark">Helios</p>
-      <nav className="tabs" role="tablist" aria-label="Helios sections">
+      <p className="wordmark">I-SOLAR</p>
+      <nav className="tabs" role="tablist" aria-label="I-SOLAR sections">
         {TABS.map((t, i) => (
           <button key={t.id} type="button" role="tab" id={`tab-${t.id}`} aria-controls={`panel-${t.id}`}
                   aria-selected={tab === t.id} className="tab-button" onClick={() => onTab(t.id)}>

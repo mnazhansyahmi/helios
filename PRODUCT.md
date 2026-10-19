@@ -23,9 +23,9 @@ aggregator team, who must match rooftop solar supply with buyer demand hour by h
 
 ## Product Purpose
 
-Helios is an AI planning tool on top of CREAM in City of Elmina. SDP leases house rooftops,
+I-SOLAR is an AI planning tool on top of CREAM in City of Elmina. SDP leases house rooftops,
 installs solar, and sends the power through TNB's grid to SDP's commercial buildings within
-5 km. Helios forecasts hourly rooftop solar and hourly buyer demand for the next working day, shares the
+5 km. I-SOLAR forecasts hourly rooftop solar and hourly buyer demand for the next working day, shares the
 solar between buyers each hour (a planning estimate; CREAM bills monthly by each buyer's
 declared allocation %), and shows the expected grid purchase and estimated CO2 avoided.
 Success in the pitch: judges grasp the supply/demand mismatch (solar peaks at noon, demand
@@ -33,7 +33,7 @@ peaks in the afternoon) and trust the numbers because their limits are stated.
 
 ## Positioning
 
-Planning, not control: Helios predicts and plans; TNB operates and balances the grid.
+Planning, not control: I-SOLAR predicts and plans; TNB operates and balances the grid.
 Its claim is honest forecasting: every model is scored on held-out data against a simple
 guess, and every example, assumed or stand-in figure is labelled.
 
@@ -61,7 +61,7 @@ back to a saved forecast and must say so with a visible banner.
 
 ## Brand Commitments
 
-Helios has its own identity. No SDP logo or brand colours; SDP, CREAM and City of Elmina are
+I-SOLAR has its own identity. No SDP logo or brand colours; SDP, CREAM and City of Elmina are
 named in text only, so nothing implies an official SDP product.
 
 ## Evidence on Hand
@@ -78,7 +78,7 @@ named in text only, so nothing implies an official SDP product.
 1. The numbers are the hero: show the mismatch, not decoration (no green-washing imagery).
 2. Readable from the back of the room: few words, large type, nothing dense.
 3. Honest by default: every figure carries its provenance; limits are stated, not hidden.
-4. Planning, never control: no wording or visual that implies Helios dispatches power.
+4. Planning, never control: no wording or visual that implies I-SOLAR dispatches power.
 5. Distinct from a generic SaaS admin template.
 
 ## Accessibility & Inclusion

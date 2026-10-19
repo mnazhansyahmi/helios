@@ -64,10 +64,10 @@ export default function App() {
     return (
       <div className="app app-waiting">
         <header className="band">
-          <p className="wordmark">Helios</p>
+          <p className="wordmark">I-SOLAR</p>
           {error ? (
             <div className="headline">
-              <h1>Can't reach the Helios server.</h1>
+              <h1>Can't reach the I-SOLAR server.</h1>
               <p className="headline-sub">Start it with <code>python run_demo.py</code>, then try again.</p>
               <button type="button" className="preset preset-small" onClick={() => load(rooftops)}>Try again</button>
             </div>

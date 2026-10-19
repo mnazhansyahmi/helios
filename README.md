@@ -1,9 +1,9 @@
-# Project Helios
+# Project I-SOLAR
 
 An AI planning tool for rooftop solar sharing in City of Elmina, built for the
 Sime Darby Property University Hackathon (Planet theme, Energy Efficiency).
 
-Helios **predicts and plans**: hourly solar supply from rooftops, hourly demand
+I-SOLAR **predicts and plans**: hourly solar supply from rooftops, hourly demand
 from buyer buildings, and how the two match. It does **not** control or balance the
 grid; TNB does that.
 
@@ -72,7 +72,7 @@ API (while running): `/api/plan?rooftops=50` returns the whole dashboard for tha
 | Matching | Shares solar between buyers each hour (a planning estimate); expected grid purchase; estimated CO₂ | `backend/app/matching.py` |
 | Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
 | API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
-| Dashboard | React + Vite, five tabs (keys 1–5): Overview (day and hour headlines, Play, hour and rooftop sliders, noon-match preset, 3D example township, 24-hour chart, buyer cards), For SDP (how Helios helps SDP as the CREAM LEGA: a data → forecast → decision → benefit strip, then four cards computed from the plan: roof yield, allocation %, storage, growth, plus a reporting row), Solar, Demand, About the data | `frontend/src/` |
+| Dashboard | React + Vite, five tabs (keys 1–5): Overview (day and hour headlines, Play, hour and rooftop sliders, noon-match preset, 3D example township, 24-hour chart, buyer cards), For SDP (how I-SOLAR helps SDP as the CREAM LEGA: a data → forecast → decision → benefit strip, then four cards computed from the plan: roof yield, allocation %, storage, growth, plus a reporting row), Solar, Demand, About the data | `frontend/src/` |
 | Design system | Visual rules for anyone extending the dashboard | `DESIGN.md`, `PRODUCT.md` |
 
 Working on the dashboard with live reload: start the API with `python run_demo.py --no-browser`,
