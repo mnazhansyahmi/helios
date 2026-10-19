@@ -169,6 +169,7 @@
 .season-table thead th { padding-bottom: .4em; font-size: .85em; font-weight: 700; color: var(--ink-3); vertical-align: bottom; white-space: normal; }
 .season-table thead small { display: block; font-size: 1em; font-weight: 500; }
 .season-table tbody th { font-weight: 700; color: var(--ink-text); }
+.season-days { font-size: .78em; font-weight: 500; color: var(--ink-3); }
 .season-table td { color: var(--ink-2); }
 .season-table .num { text-align: right; }
 .season-table th:first-child, .season-table td:first-child { padding-left: 0; }
@@ -180,7 +181,7 @@
 .season-unused-bar { height: clamp(8px, 1.1vh, 12px); background: var(--zinc-50); box-shadow: inset 0 0 0 1px var(--rule); }
 .season-unused-bar span { display: block; height: 100%; background: var(--sun-pale); box-shadow: inset 0 0 0 1px var(--sun-edge); }
 .season-unused .num { text-align: right; }
-.season-note { padding: clamp(6px, .6vw, 12px) var(--gutter); font-size: clamp(11px, .75vw, 14px); color: var(--ink-3); display: flex; flex-wrap: wrap; align-items: center; gap: .3em .5em; }
+.season-note { padding: clamp(6px, .6vw, 12px) var(--gutter); font-size: clamp(11px, .75vw, 14px); line-height: 1.6; color: var(--ink-3); }
 .season-empty { padding: clamp(16px, 2vw, 40px) var(--gutter); font-size: clamp(14px, 1.05vw, 20px); color: var(--ink-2); }
 .season-empty code { font-size: .92em; color: var(--ink-text); }
 

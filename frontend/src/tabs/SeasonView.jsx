@@ -9,6 +9,8 @@ const DAY_MONTHS = ["January", "February", "March", "April", "May", "June", "Jul
 
 /** "2026-09" -> "Sep 2026" */
 const monthName = (ym) => `${MONTHS[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}`;
+/** Days in a "2026-09" month (28-31). */
+const daysIn = (ym) => new Date(Date.UTC(Number(ym.slice(0, 4)), Number(ym.slice(5)), 0)).getUTCDate();
 /** "2025-10-01" -> "1 October 2025" */
 const dayName = (iso) => `${Number(iso.slice(8))} ${DAY_MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 
@@ -52,7 +54,10 @@ export default function SeasonView() {
           <tbody>
             {season.months.map((m) => (
               <tr key={m.month}>
-                <th scope="row">{monthName(m.month)}</th>
+                <th scope="row">
+                  {monthName(m.month)}
+                  {m.days < daysIn(m.month) && <small className="season-days"> {m.days}/{daysIn(m.month)} days</small>}
+                </th>
                 {season.buyers.map((b) => (
                   <td key={b.id} className="num">{m.allocation_pct[b.id] == null ? "–" : `${Math.round(m.allocation_pct[b.id])}%`}</td>
                 ))}
@@ -75,7 +80,8 @@ export default function SeasonView() {
       </div>
       <p className="season-note">
         Share = each buyer's part of demand in the sunlit hours (the example allocation %). Buyers <Tag kind="STAND-IN" />.
-        Weather: {season.sources.join("; ")}.
+        {season.months.some((m) => m.days < daysIn(m.month)) && " Hours with missing satellite data are left out; unused solar covers the days with data."}
+        {" "}Weather: {season.sources.join("; ")}.
       </p>
     </section>
   );
