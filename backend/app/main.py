@@ -3,6 +3,7 @@ Helios API (FastAPI). Start it with `python run_demo.py` from the HELIOS folder.
 
 Endpoints
   GET /api/plan?rooftops=50&day=2026-10-16   the whole dashboard for one day
+      &day_type=sunny|average|cloudy           what-if: a real past day's sunlight instead of the forecast
   GET /api/accuracy                          held-out accuracy results (full detail)
   GET /api/season                            12 months of past weather through the models (ml/05_season.py)
   GET /api/health                            is the server up?
@@ -10,6 +11,7 @@ Endpoints
   GET /                                      the dashboard (once frontend/ is built)
 """
 import datetime as dt
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
@@ -22,10 +24,11 @@ app = FastAPI(title="I-SOLAR API", description="Solar and demand planning protot
 
 @app.get("/api/plan")
 def plan(rooftops: int = Query(config.FLEET_DEFAULT, ge=config.FLEET_MIN, le=config.FLEET_MAX),
-         day: dt.date | None = None):
+         day: dt.date | None = None,
+         day_type: Literal["forecast", "sunny", "average", "cloudy"] = "forecast"):
     """Hourly plan for one day (default: the next working day in Selangor) and a fleet-size scenario."""
     try:
-        return planner.build_plan(day or planner.next_working_day(), rooftops)
+        return planner.build_plan(day or planner.next_working_day(), rooftops, day_type)
     except RuntimeError as error:   # e.g. no internet AND no saved forecast
         raise HTTPException(status_code=503, detail=str(error))
 

@@ -75,6 +75,18 @@ noon-match rooftop count of that period's average day. It needs a one-time downl
 
 This writes `backend/data/season.json`; commit it so the dashboard shows the season offline.
 
+## Day type (what-if)
+
+The top-bar settings can swap the forecast's sunlight for the REAL measured sunlight of one past day
+(Himawari sunlight, ERA5 temperature and wind, from the committed `backend/data/processed/solar_history.csv`):
+the 90th-percentile, median and 10th-percentile day by total sunlight, Oct 2025 – Sep 2026, complete
+days only. Buyer demand stays the forecast's. The three days are picked once into
+`backend/data/whatif_days.json` (no download needed):
+
+```bash
+.venv\Scripts\python backend/ml/06_whatif_days.py
+```
+
 ## How it is built
 
 | Part | What it does | Where |
@@ -84,7 +96,7 @@ This writes `backend/data/season.json`; commit it so the dashboard shows the sea
 | Matching | Shares solar between buyers each hour (a planning estimate); expected grid purchase; estimated CO₂ | `backend/app/matching.py` |
 | Day plan | Puts it all together for the dashboard; slider + noon-match preset | `backend/app/planner.py` |
 | API | FastAPI server; serves the dashboard too | `backend/app/main.py` |
-| Dashboard | React + Vite, five tabs (keys 1–5): Overview (day and hour headlines, Play, hour slider, scenario button opening the rooftop slider and noon-match preset, 3D example township, 24-hour chart, buyer cards), For SDP (how I-SOLAR helps SDP as the CREAM LEGA: a data → forecast → decision → benefit strip, then four cards computed from the plan: roof yield, allocation %, storage, growth, plus a reporting row), Solar, Demand, About the data | `frontend/src/` |
+| Dashboard | React + Vite, five tabs (keys 1–5): Overview (day and hour headlines, Play, hour slider, top-bar settings (rooftop slider, noon-match preset, day type: forecast or a real sunny / average / cloudy past day), 3D example township, 24-hour chart, buyer cards), For SDP (how I-SOLAR helps SDP as the CREAM LEGA: a data → forecast → decision → benefit strip, then four cards computed from the plan: roof yield, allocation %, storage, growth, plus a reporting row), Solar, Demand, About the data | `frontend/src/` |
 | Design system | Visual rules for anyone extending the dashboard | `DESIGN.md`, `PRODUCT.md` |
 
 Working on the dashboard with live reload: start the API with `python run_demo.py --no-browser`,

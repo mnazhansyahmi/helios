@@ -143,9 +143,7 @@ for reading, so the page stays one voice.
 
 Five tabs (keys 1–5): Overview, For SDP, Solar, Demand, About the data. Every tab fits one screen with no
 scrolling at 1920×1080, 1366×768, 1280×720 and 1024×768. The Overview tells the whole story:
-an ink band (the day line, small, grey and on one line; the hour line, the only headline; then one row of controls: Play and a shorter hour slider on the
-left, a small "Scenario: 337 roofs" button with a gear on the right, which opens the rooftop slider and
-the noon-match preset in a modal), then the 3D township (left, 3 : 2) beside the 24-hour
+an ink band (the day line, small, grey and on one line; the hour line, the only headline; then Play and a shorter hour slider; rooftops and day type are in the top bar's settings), then the 3D township (left, 3 : 2) beside the 24-hour
 chart (right), then the buyer cards (three buyers, with one line under them pointing to About the data for the
 tags). Clear space (clamp(10px, 1.3vw, 26px)) separates the band, the township/chart row and the cards. When a
 screen is crowded the day line shrinks first; the hour line and the chart never do. Screens
@@ -182,10 +180,17 @@ rectangles. Buyer markers are squares that fill amber from the bottom.
 - **Disabled:** band-track fill with secondary text, when the forecast has no noon sun.
 - **Focus:** 3px white outline, 3px offset on the band; 3px ink outline on white.
 
+### Settings (top bar)
+A small live label at the right of the top bar, beside the plan date ("337 roofs · Forecast", with a
+drawn sliders icon), drops a panel down from under the top bar at the right (the band's ink, a hairline
+frame, a dimmed backdrop). Esc, a click outside or Done closes it; focus moves into it and number keys
+do not switch tabs while it is open. Two settings: the scenario slider (below) and "Day type", four
+segmented buttons: Forecast (default) / Sunny / Average / Cloudy. A what-if day type shows an
+amber-outlined banner at the foot of the top bar on every tab ("What-if: cloudy day — real sunlight
+from <date>, not a forecast", EXAMPLE).
+
 ### Scenario slider
-Lives in a modal (the band's ink, a hairline frame, a dimmed backdrop) opened by the small "Scenario:
-N roofs" button; Esc, the backdrop or Done closes it, and number keys do not switch tabs while it is
-open. Inside: condensed rooftop count beside the always-visible "scenario, not a CREAM figure" note and
+Condensed rooftop count beside the always-visible "scenario, not a CREAM figure" note and
 EXAMPLE tag, above a 10px track in band-track with amber fill up to the value, a square white
 thumb with an amber border, and a "noon match" tick under the track.
 

@@ -110,6 +110,51 @@ button { font: inherit; }
 }
 .band-error { color: var(--sun); font-weight: 600; }
 
+/* settings in the top bar: a small live label that drops a panel down from under the bar, at the right */
+.settings-open {
+  display: inline-flex; align-items: center; gap: .5em; align-self: center; cursor: pointer; white-space: nowrap;
+  padding: .3em .75em; background: transparent; color: var(--band-text-2); border: 1px solid var(--band-track);
+  font-size: clamp(13px, .92vw, 18px); font-weight: 600;
+}
+.settings-open strong { color: var(--paper); font-weight: 800; font-variant-numeric: tabular-nums; }
+.settings-open:hover { color: var(--paper); border-color: var(--band-text-2); }
+.settings-open:focus-visible { outline: 3px solid var(--paper); outline-offset: 3px; }
+.settings-icon { width: 1.2em; height: 1.2em; flex: 0 0 auto; }
+.settings-panel {
+  position: fixed; inset: auto var(--gutter) auto auto; margin: 0; padding: 0;   /* top is set when it opens */
+  width: min(calc(100vw - 2 * var(--gutter)), 620px); max-height: calc(100vh - 90px); overflow: auto;
+  border: 1px solid var(--band-track); border-top: 0; background: var(--ink); color: var(--paper);
+}
+.settings-panel::backdrop { background: rgba(14, 26, 36, .45); }
+.settings-body { display: grid; gap: clamp(14px, 1.4vw, 24px); padding: clamp(14px, 1.4vw, 24px); }
+.settings-panel .ov-scenario-box { border: 0; padding: 0; }
+.settings-panel .ov-rooftops-note { flex-basis: 100%; }
+.settings-panel .ov-rooftops-sep { display: none; }
+.day-type { gap: .5rem; }
+.day-type-buttons { display: flex; border: 1px solid var(--band-text-2); }
+.day-type-buttons button {
+  flex: 1; padding: .4em .6em; cursor: pointer; background: transparent; color: var(--band-text-2); border: 0;
+  font-stretch: 75%; font-weight: 800; font-size: clamp(15px, 1.05vw, 20px);
+}
+.day-type-buttons button + button { border-left: 1px solid var(--band-text-2); }
+.day-type-buttons button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+.day-type-buttons button:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
+.day-type-note { font-size: clamp(11px, .75vw, 14px); line-height: 1.4; color: var(--band-text-2); }
+.scenario-done {
+  justify-self: end; padding: .35em 1.1em; cursor: pointer;
+  background: transparent; color: var(--paper); border: 2px solid var(--paper);
+  font-stretch: 75%; font-weight: 800; font-size: clamp(15px, 1.05vw, 20px);
+}
+.scenario-done:hover { background: rgba(255, 255, 255, .1); }
+/* what-if banner: an amber-outlined strip at the foot of the top bar, on every tab */
+.whatif-banner {
+  flex: 1 1 32rem; display: flex; align-items: center; flex-wrap: wrap; gap: .3em .5em;   /* shares a row with the stamp when it fits */
+  margin: .1rem 0 .3rem; padding: .3em .8em; border: 2px solid var(--sun); color: var(--paper);
+  font-size: clamp(13px, .92vw, 18px);
+}
+.whatif-banner b { color: var(--sun); font-weight: 800; }
+.whatif-banner .tag { color: var(--band-text-2); }
+
 .headline h1 {
   font-stretch: 75%; font-weight: 800;
   font-size: clamp(30px, 3.75vw, 80px);

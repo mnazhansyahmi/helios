@@ -11,9 +11,9 @@ import time
 
 import pandas as pd
 
-from . import config, demand, matching, reports, sites, solar, weather
+from . import config, demand, matching, reports, sites, solar, weather, whatif
 
-_BASE_CACHE: dict = {}          # day -> (time created, base data)
+_BASE_CACHE: dict = {}          # (day, day type) -> (time created, base data)
 BASE_CACHE_SECONDS = 30 * 60
 
 
@@ -34,19 +34,26 @@ def next_working_day(today: dt.date | None = None) -> dt.date:
     return day
 
 
-def day_base(day: dt.date) -> dict:
-    """Weather, solar for ONE roof of each example type, and buyer demand, for one day."""
-    cached = _BASE_CACHE.get(day)
+def day_base(day: dt.date, day_type: str = "forecast") -> dict:
+    """
+    Weather, solar for ONE roof of each example type, and buyer demand, for one day.
+    day_type "sunny" / "average" / "cloudy": solar from the measured weather of a real past day
+    (see whatif.py) instead of the forecast; buyer demand stays the forecast's.
+    """
+    cached = _BASE_CACHE.get((day, day_type))
     if cached and time.time() - cached[0] < BASE_CACHE_SECONDS:
         return cached[1]
     forecast, info = weather.get_forecast_for_day(day)
-    # corrected_ghi() is the raw forecast unless a solar correction model was saved (see 02_eval_solar.py)
-    sunlight = forecast.assign(ghi=solar.corrected_ghi(forecast))
+    if day_type == "forecast":
+        # corrected_ghi() is the raw forecast unless a solar correction model was saved (see 02_eval_solar.py)
+        sunlight, what_if = forecast.assign(ghi=solar.corrected_ghi(forecast)), None
+    else:
+        sunlight, what_if = whatif.sunlight_for(day_type, forecast.index)   # measured: no correction
     one_roof = pd.DataFrame({r["id"]: solar.rooftop_kwh(sunlight, r["kwp"], r["tilt"], r["azimuth"])
                              for r in sites.ROOFTOPS})
     need = pd.DataFrame({b["id"]: demand.predict_kwh(b, forecast) for b in sites.BUYERS})
-    base = {"info": info, "one_roof": one_roof.fillna(0), "demand": need}
-    _BASE_CACHE[day] = (time.time(), base)
+    base = {"info": info, "one_roof": one_roof.fillna(0), "demand": need, "what_if": what_if}
+    _BASE_CACHE[(day, day_type)] = (time.time(), base)
     return base
 
 
@@ -121,8 +128,8 @@ def _mass(kg: float) -> str:
     return f"{kg / 1000:,.1f} tonnes" if kg >= 1000 else f"{kg:,.0f} kg"
 
 
-def build_plan(day: dt.date, rooftop_count: int) -> dict:
-    base = day_base(day)
+def build_plan(day: dt.date, rooftop_count: int, day_type: str = "forecast") -> dict:
+    base = day_base(day, day_type)
     info, need = base["info"], base["demand"]
     roofs_per_type = rooftop_count / len(sites.ROOFTOPS)   # each example rooftop stands for this many roofs
     supply = base["one_roof"] * roofs_per_type
@@ -195,6 +202,8 @@ def build_plan(day: dt.date, rooftop_count: int) -> dict:
         "weather": {**info, "tag": "REAL",
                     "banner": None if info["source"] == "live" else
                     f"Offline: showing the forecast saved on {info['fetched_at'].replace('T', ' ')}"},
+        # null for the forecast; else the what-if day ({id, label, date}): the dashboard shows a banner
+        "what_if": base["what_if"],
         "scenario": {"rooftops": rooftop_count, "min": config.FLEET_MIN, "max": config.FLEET_MAX,
                      "default": config.FLEET_DEFAULT, "tag": "EXAMPLE",
                      "preset_noon_match": noon_match_rooftops(base["one_roof"], need),
